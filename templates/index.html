@@ -1,0 +1,65 @@
+	<div class="jumbotron bg-danger text-white radius-0 mb-0">
+		<div class="container">
+			<h1 class="display-1 text-chicle text-light"><img src="tabby.png" alt"" style="height: 0.75em; vertical-align: baseline;"> Tabby</h1>
+			<span class="lead text-light">Tabby is a tool to manage debt to friends. It automates splitting of bills and makes sure people pay back their meals and whoever paid makes sure to check his bank account.</span>
+		</div>
+	</div>
+
+
+	<div class="container py-5">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="card text-center">
+					<div class="card-body">
+						<h4 class="card-title">Login</h4>
+						<div class="pt-3">
+							<form action="login" method="post">
+								<div class="form-group row">
+									<label for="email" class="col-sm-4 col-form-label">Email</label>
+									<div class="col-sm-8">
+										<input type="email" class="form-control" id="email" name="email" placeholder="Email Adress">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="password" class="col-sm-4 col-form-label">Password</label>
+									<div class="col-sm-8">
+										<input type="password" class="form-control" id="password" name="password" placeholder="Password">
+									</div>
+								</div>
+								<button type="submit" class="btn btn-danger">Sign In</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card text-center">
+					<div class="card-header">
+						Register an account
+					</div>
+					<div class="card-body">
+						<h4 class="card-title">This is not a public service</h4>
+						<p class="card-text">This installation of Tabby is a private instance. You are free to register an account but the instance owner has to approve your account.</p>
+						<a href="register" class="btn btn-danger">Register</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card mb-3 text-center bg-danger text-white">
+					<div class="card-body">
+						<blockquote class="card-blockquote">
+							<p>Want to check whether you owe anyone? Request a link to see your debt or credit before reminder emails fill your mailbox.</p>
+							<form action="requesttoken" method="post">
+								<div class="input-group mb-3">
+									<input name="email" type="text" class="form-control" placeholder="Email Address">
+									<div class="input-group-append">
+										<button name="request" class="btn btn-outline-light" type="submit">Request</button>
+									</div>
+								</div>
+							</form>
+						</blockquote>
+					</div>
+				</div>
+			</div>
+		</div>		
+	</div>
