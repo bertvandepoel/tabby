@@ -110,15 +110,6 @@ function update_reminddate() {
 	$update->execute(array($_SESSION['tabby_loggedin']));
 }
 
-function str_rand($length) {
-	$chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	$return = '';
-	for ($i = 0; $i < $length; $i++) {
-        $return .= $chars[rand(0, strlen($chars)-1)];
-    }
-	return $return;
-}
-
 function get_pending_user_from_confirmation($confirmation) {
 	global $db;
 	$get = $db->prepare('SELECT * FROM pending_users WHERE confirmation=?');
@@ -139,3 +130,11 @@ function get_users_by_reminddif($days) {
 	return $get->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function str_rand($length) {
+	$chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$return = '';
+	for ($i = 0; $i < $length; $i++) {
+        $return .= $chars[random_int(0, strlen($chars)-1)];
+    }
+	return $return;
+}
