@@ -53,7 +53,7 @@ function user_email_confirm($confirmation) {
 		$update = $db->prepare('UPDATE pending_users SET confirmation=? WHERE confirmation=?');
 		$update->execute(array($newconfirm, $confirmation));
 		
-		$message = "Hi there admin,\r\n\r\nAn account has been registered and confirmed for a new user..\r\nYou can confirm the account by visiting " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . "adminconfirm/" . $newconfirm . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+		$message = "Hi there admin,\r\n\r\nAn account has been registered and confirmed for a new user.\r\nYou can confirm the account by visiting " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . "adminconfirm/" . $newconfirm . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 		$headers = 'From: ' . $application_email;
 		mail($admin_email, 'Tabby: new confirmed user', $message, $headers);
 		
