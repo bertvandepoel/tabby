@@ -30,6 +30,7 @@ While initially developing Tabby as mostly a quick little script, I somehow mana
 * Edit config.php to reflect your situation
 * Import db.sql into your empty database
 * Manually add an entry to the users table for your admin account, the password should be a PHP password_hash. I should probably automate this somehow.
+* Setup a daily cronjob for cron.php
 
 ## License
 
