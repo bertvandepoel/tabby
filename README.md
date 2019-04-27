@@ -19,7 +19,7 @@ While initially developing Tabby as mostly a quick little script, I somehow mana
 
 ## Requirements
 
-* PHP 5.5.9 or up, works fine with PHP 7, might also work with even older versions
+* PHP 7.2 or up, mostly works fine with PHP 5.5.9 except for email functionality
 * MySQL (may also work with PostgreSQL)
 * Cron
 * Working mail setup on the webserver
