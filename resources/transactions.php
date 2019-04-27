@@ -92,6 +92,9 @@ function get_transactions_per_debtor() {
 		});
 		$debtors[$key]['data'] = array_reverse(array_slice($debtors[$key]['data'], 0, 4, TRUE), true);
 	}
+	usort($debtors, function ($a, $b) {
+		return ($a['total'] < $b['total']) ? -1 : 1;
+	});
 	return $debtors;
 }
 
