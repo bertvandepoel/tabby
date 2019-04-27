@@ -54,7 +54,7 @@ function detailcard($card, $type) {
 
 function activitycard($card, $debtors) {
 	?>
-	<div class="card my-2">
+	<div class="card my-2 activitycard">
 		<div class="card-header text-center">
 			<?php echo $card['name'] ?><span class="badge badge-primary p-2 mr-2 float-left"><?php echo date('d M Y', strtotime($card['date'])); ?></span>
 		</div>
@@ -92,11 +92,16 @@ function activitycard($card, $debtors) {
 								?>
 							</select>
 						</div>
-						<div class="col-md-5 px-1">
+						<div class="col-md-4 px-1">
 							<input type="text" class="form-control" id="comment" name="comment" placeholder="1 pizza pepperoni + 2 ice teas">
 						</div>
 						<div class="col-md-2 px-1">
 							<input type="text" class="form-control" id="amount" placeholder="13.20" name="amount">
+						</div>
+						<div class="col-md-1 px-1 align-self-center">
+							<div class="form-check form-check-inline">
+								<input name="sendmail" type="checkbox" class="form-check-input" id="mail-checkbox-<?php echo $card['id']; ?>"> <label class="form-check-label" for="mail-checkbox-<?php echo $card['id']; ?>"><span class="fas fa-envelope" title="notify contact"></label>
+							</div>
 						</div>
 						<div class="col-md-1 px-1">
 							<button name="debt" type="submit" class="btn btn-danger btn-sm mt-1" value="<?php echo $card['id']; ?>"><span class="fas fa-plus-square"></span></button>

@@ -17,9 +17,10 @@
 			min-width: 25rem;
 			max-width: 33rem;
 		}
-		/*.card-deck .card .list-group {
-			font-size: 0.9rem;
-		}*/
+		.card-deck .activitycard {
+			min-width: 33rem;
+			max-width: 45rem;
+		}
 	</style>
 </head>
 <body class="d-flex flex-column h-100">

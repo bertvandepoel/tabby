@@ -34,3 +34,14 @@ function del_activity($id) {
 	}
 	return FALSE;
 }
+
+function get_activity($actid) {
+	global $db;
+	$get = $db->prepare('SELECT id, name, date FROM activities WHERE id=? AND user=?');
+	$get->execute(array($actid, $_SESSION['tabby_loggedin']));
+	$result = $get->fetch(PDO::FETCH_ASSOC);
+	if(!$result) {
+		return FALSE;
+	}
+	return $result;
+}

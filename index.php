@@ -362,9 +362,24 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 			else {
 				$debtor = get_debtor_details($_POST['debtor']);
 				$amount = str_replace(',', '.', $_POST['amount']) * 100;
-				add_debt($_POST['debt'], $debtor['id'], $_POST['comment'], $amount);
-				$success = 'Debt added.';
-				include('templates/success.php');
+				$act = get_activity($_POST['debt']);
+				if(!$act) {
+					$error = 'Stop playing';
+					include('templates/error.php');
+				}
+				else {
+					add_debt($act['id'], $debtor['id'], $_POST['comment'], $amount);
+					if(isset($_POST['sendmail'])) {
+						$user = get_user_details();
+						$token = get_debtor_token($debtor['email']);
+						if($token === FALSE) {
+							$token = create_debtor_token($debtor['email']);
+						}
+						email_new_debt($debtor, $user, $act['name'], date('d M Y', strtotime($act['date'])), $_POST['comment'], $amount, $token);
+					}
+					$success = 'Debt added.';
+					include('templates/success.php');
+				}
 			}
 		}
 		title('Overview of your activities');
