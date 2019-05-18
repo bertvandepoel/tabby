@@ -1,0 +1,29 @@
+version: '2.2'
+services:
+    tabby:
+        build: .
+        ports:
+            - 80
+        environment:
+            TABBY_DOMAIN: localhost
+            TABBY_DB_DSN: 'mysql:host=db;dbname=tabby'
+            TABBY_DB_USER: tabby
+            TABBY_DB_PASSWORD: tabby
+            TABBY_SMTP_SERVER: mailcatcher:1025
+        depends_on:
+            - db
+            - mailcatcher
+    db:
+        image: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        environment:
+            MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+            MYSQL_DATABASE: tabby
+            MYSQL_USER: tabby
+            MYSQL_PASSWORD: tabby
+    mailcatcher:
+        image: schickling/mailcatcher
+        ports:
+            - 1080
+
+

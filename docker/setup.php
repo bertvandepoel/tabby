@@ -19,10 +19,14 @@ $sql_statements = explode(';', file_get_contents($database_setup_file));
 echo "Load SQL statements from $database_setup_file\n\n";
 
 foreach($sql_statements as $sql) {
+    $sql = str_replace("\n", "", $sql);
+    if(!trim($sql))
+        continue;
     try {
+        echo "$sql\n";
         $db->exec($sql);
     } catch(PDOException $e) {
-        echo "FAILED: ".str_replace("\n", "", $sql)."\n$e\n";
+        echo "FAILED: $e\n";
         exit(1);
     }
 }

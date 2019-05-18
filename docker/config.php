@@ -4,8 +4,8 @@ try {
 	$db = new PDO($_SERVER["TABBY_DB_DSN"], $_SERVER["TABBY_DB_USER"], $_SERVER["TABBY_DB_PASSWORD"], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-	echo 'Something\'s wrong: '.$e->getMessage();
-	die();
+	echo 'Something\'s wrong: '.$e->getMessage()."\n";
+    throw $e;
 }
 
 if(!@$_SERVER["TABBY_APPLICATION_EMAIL"]) {
