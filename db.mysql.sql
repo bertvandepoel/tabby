@@ -1,4 +1,4 @@
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `email` varchar(50) NOT NULL,
   `name` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -7,14 +7,14 @@ CREATE TABLE `users` (
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `tokens` (
+CREATE TABLE IF NOT EXISTS `tokens` (
   `email` varchar(50) NOT NULL,
   `token` varchar(25) NOT NULL,
   PRIMARY KEY (`email`),
   UNIQUE KEY `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `activities` (
+CREATE TABLE IF NOT EXISTS `activities` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(250) NOT NULL,
   `user` varchar(50) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE `activities` (
   FOREIGN KEY (`user`) REFERENCES users(email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `debtors` (
+CREATE TABLE IF NOT EXISTS `debtors` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE `debtors` (
   FOREIGN KEY (`user`) REFERENCES users(email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `credits` (
+CREATE TABLE IF NOT EXISTS `credits` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `debtor` int(11) NOT NULL,
   `comment` varchar(250) NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE `credits` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE `debts` (
+CREATE TABLE IF NOT EXISTS `debts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `activity` int(11) NOT NULL,
   `debtor` int(11) NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE `debts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE `pending_users` (
+CREATE TABLE IF NOT EXISTS `pending_users` (
   `email` varchar(50) NOT NULL,
   `name` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
