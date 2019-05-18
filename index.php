@@ -4,7 +4,9 @@ include('config.php');
 include('resources/users.php');
 
 $uri = $_SERVER['REQUEST_URI'];
-$local_uri = str_replace($base_url, '', $uri);
+if (strpos($uri, $base_url) === 0) {
+    $local_uri = substr($uri, strlen($base_url));
+}
 $local_uri = explode('?', $local_uri);
 $location = rtrim($local_uri[0], '/');
 
