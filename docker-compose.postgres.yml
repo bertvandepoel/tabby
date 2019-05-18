@@ -1,0 +1,12 @@
+version: '2.2'
+services:
+    tabby:
+        environment:
+            TABBY_DB_DSN: 'pgsql:host=db;dbname=tabby'
+    db:
+        image: postgres
+        environment:
+            POSTGRES_USER: tabby
+            POSTGRES_PASSWORD: tabby
+            POSTGRES_DB: tabby
+    
