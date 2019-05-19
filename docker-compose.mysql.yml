@@ -1,10 +1,10 @@
 version: '2.2'
 services:
     tabby:
-       environment:
-            TABBY_DB_DSN: 'mysql:host=db;dbname=tabby'
+        environment:
+          TABBY_DB_DSN: 'mysql:host=db;dbname=tabby'
         depends_on:
-            - db
+          - db
     db:
         image: mysql
         command: --default-authentication-plugin=mysql_native_password
@@ -13,5 +13,3 @@ services:
             MYSQL_DATABASE: tabby
             MYSQL_USER: tabby
             MYSQL_PASSWORD: tabby
-
-

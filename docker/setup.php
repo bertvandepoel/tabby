@@ -5,7 +5,7 @@ require $_SERVER["WEB_DOCUMENT_ROOT"]."/config.php";
 
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$database_type = explode(':', $_SERVER["TABBY_DB_DSN"])[0];
+$database_type = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
 
 $database_setup_file = $_SERVER["WEB_DOCUMENT_ROOT"].'/db.'.$database_type.'.sql';
 

@@ -2,8 +2,11 @@
 
 try {
 	$db = new PDO('mysql:host=localhost;dbname=tabby', 'user', 'password', array(
-		PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8; SET SESSION sql_mode=\'ANSI_QUOTES\';'
+		PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8;'
 	));
+	if($db->getAttribute(PDO::ATTR_DRIVER_NAME) == "mysql") {
+		$db->query('SET SESSION sql_mode=\'ANSI_QUOTES\'')->closeCursor();
+	}
 } catch (PDOException $e) {
 	echo 'Something\'s wrong';
 	die();
