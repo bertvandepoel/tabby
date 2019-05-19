@@ -17,4 +17,5 @@ ADD ./docker/config.php /app/config.php
 ADD ./docker/ssmtp.sh /opt/docker/provision/entrypoint.d/20-ssmtp.sh
 ADD ./docker/setup.php /opt/docker/provision/entrypoint.d/40-tabby-setup.php
 RUN echo "php /opt/docker/provision/entrypoint.d/40-tabby-setup.php" > /opt/docker/provision/entrypoint.d/40-tabby-setup.sh
+RUN echo "0 0 * * * application /usr/bin/env php /app/cron.php" > /opt/docker/etc/cron/tabby
 RUN chmod +x /opt/docker/provision/entrypoint.d/20-ssmtp.sh /opt/docker/provision/entrypoint.d/40-tabby-setup.sh
