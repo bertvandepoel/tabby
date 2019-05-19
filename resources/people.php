@@ -94,26 +94,26 @@ function reset_token($token) {
 }
 
 function mail_token($email, $token) {
-	global $base_url;
+	global $reminderurl;
 	global $application_email;
-	$message = "Hi there,\r\n\r\nYou requested an overview of your debt and credit. You can find that on " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+	$message = "Hi there,\r\n\r\nYou requested an overview of your debt and credit. You can find that on " . $reminderurl . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 	$headers = 'From: ' . $application_email;
 	mail($email, 'Tabby: you requested an overview', $message, $headers);
 }
 
 function email_reminder($email, $total, $comment, $token, $user) {
-	global $base_url;
+	global $reminderurl;
 	global $application_email;
-	
+
 	update_reminddate();
-	
+
 	if(is_null($comment)) {
-		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . number_format((-$total / 100), 2) . " euro.\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . number_format((-$total / 100), 2) . " euro.\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $reminderurl . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 	}
 	else {
-		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . number_format((-$total / 100), 2) . " euro.\r\n\r\nThey added the following message for you \"" . $comment . "\".\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . number_format((-$total / 100), 2) . " euro.\r\n\r\nThey added the following message for you \"" . $comment . "\".\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $reminderurl . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 	}
-	
+
 	$headers = array(
 		'From' => $application_email,
 		'Reply-To' => $user['email']

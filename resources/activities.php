@@ -14,10 +14,10 @@ function add_debt($actid, $debtor, $comment, $amount) {
 }
 
 function email_new_debt($debtor, $user, $actname, $actdate, $comment, $amount, $token) {
-	global $base_url;
+	global $reminderurl;
 	global $application_email;
-	
-	$message = "Hi there,\r\n\r\nThis is a notification that " . $user['name'] . " has added \"" . $actname . "\" in Tabby as a new activity that took place on " . $actdate . ". You owe them " . number_format(($amount / 100), 2) . " euro for this activity, they mentioned the following details for you \"" . $comment . "\". You can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+
+	$message = "Hi there,\r\n\r\nThis is a notification that " . $user['name'] . " has added \"" . $actname . "\" in Tabby as a new activity that took place on " . $actdate . ". You owe them " . number_format(($amount / 100), 2) . " euro for this activity, they mentioned the following details for you \"" . $comment . "\". You can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $reminderurl . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 	$headers = array(
 		'From' => $application_email,
 		'Reply-To' => $user['email']

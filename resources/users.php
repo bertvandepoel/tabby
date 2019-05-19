@@ -28,42 +28,42 @@ function update_user($email, $name, $iban) {
 
 function register_user($email, $name, $password, $iban) {
 	global $db;
-	global $base_url;
+	global $reminderurl;
 	global $application_email;
-	
+
 	$insert = $db->prepare('INSERT INTO pending_users VALUES (?,?,?,?,?,NOW())');
 	$confirm = str_rand(25);
 	$insert->execute(array($email, $name, password_hash($password, PASSWORD_DEFAULT), $iban, $confirm));
-	
-	$message = "Hi " . $name . ",\r\n\r\nYou have registered an account with a Tabby instance for debt management.\r\nPlease confirm your account by visiting " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . "confirm/" . $confirm . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+
+	$message = "Hi " . $name . ",\r\n\r\nYou have registered an account with a Tabby instance for debt management.\r\nPlease confirm your account by visiting " . $reminderurl. "confirm/" . $confirm . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 	$headers = 'From: ' . $application_email;
 	mail($email, 'Tabby: please confirm your email address', $message, $headers);
 }
 
 function user_email_confirm($confirmation) {
 	global $db;
-	global $base_url;
+	global $reminderurl;
 	global $application_email;
 	global $admin_email;
-	
+
 	$get = $db->prepare('SELECT count(*) FROM pending_users WHERE confirmation=?');
 	$get->execute(array($confirmation));
 	if($get->fetchColumn() > 0) {
 		$newconfirm = str_rand(25);
 		$update = $db->prepare('UPDATE pending_users SET confirmation=? WHERE confirmation=?');
 		$update->execute(array($newconfirm, $confirmation));
-		
-		$message = "Hi there admin,\r\n\r\nAn account has been registered and confirmed for a new user.\r\nYou can confirm the account by visiting " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . "adminconfirm/" . $newconfirm . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+
+		$message = "Hi there admin,\r\n\r\nAn account has been registered and confirmed for a new user.\r\nYou can confirm the account by visiting " . $reminderurl . "adminconfirm/" . $newconfirm . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 		$headers = 'From: ' . $application_email;
 		mail($admin_email, 'Tabby: new confirmed user', $message, $headers);
-		
+
 		return TRUE;
 	}
 }
 
 function user_admin_confirm($confirmation) {
 	global $db;
-	global $base_url;
+	global $reminderurl;
 	global $application_email;
 	$get = $db->prepare('SELECT * FROM pending_users WHERE confirmation=?');
 	$get->execute(array($confirmation));
@@ -73,11 +73,11 @@ function user_admin_confirm($confirmation) {
 		$insert->execute(array($pending['email'], $pending['name'], $pending['password'], $pending['iban'], NULL));
 		$delete = $db->prepare('DELETE FROM pending_users WHERE confirmation=?');
 		$delete->execute(array($confirmation));
-		
-		$message = "Hi " . $pending['name'] . ",\r\n\r\nYou registered a Tabby account on " . date('d M Y', strtotime($pending['datetime'])) . ". The admin of this instance has just confirmed it. So that means you can now get going.\r\n\r\nGo login at " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . " start tracking debt.\r\n\r\nHave a nice day!\r\n\r\nTabby";
+
+		$message = "Hi " . $pending['name'] . ",\r\n\r\nYou registered a Tabby account on " . date('d M Y', strtotime($pending['datetime'])) . ". The admin of this instance has just confirmed it. So that means you can now get going.\r\n\r\nGo login at " . $reminderurl . " start tracking debt.\r\n\r\nHave a nice day!\r\n\r\nTabby";
 		$headers = 'From: ' . $application_email;
 		mail($pending['email'], 'Tabby: the admin has confirmed your account', $message, $headers);
-		
+
 		return TRUE;
 	}
 	else {
