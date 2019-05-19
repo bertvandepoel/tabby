@@ -261,7 +261,7 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 		$user = get_user_details();
 		if(isset($_POST['submit'])) {
 			$finstate = get_all_debtor_financial_state();
-			if($_POST['debtor'] == TABBY_REMIND_EVERYONE) {
+			if($_POST['debtor'] == 'TABBY_REMIND_EVERYONE') {
 				$error = 'No one has any debt with you.';
 				if(strlen($_POST['comment']) > 3) {
 					$comment = $_POST['comment'];
