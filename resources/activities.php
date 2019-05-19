@@ -2,7 +2,7 @@
 
 function add_activity($name, $date) {
 	global $db;
-	$insert = $db->prepare('INSERT INTO activities (name, user, date) VALUES (?,?,?)');
+	$insert = $db->prepare('INSERT INTO activities (name, "user", date) VALUES (?,?,?)');
 	$insert->execute(array($name, $_SESSION['tabby_loggedin'], $date));
 	return $db->lastInsertId();
 }
@@ -27,7 +27,7 @@ function email_new_debt($debtor, $user, $actname, $actdate, $comment, $amount, $
 
 function del_activity($id) {
 	global $db;
-	$del = $db->prepare('DELETE FROM activities WHERE id=? AND user=?');
+	$del = $db->prepare('DELETE FROM activities WHERE id=? AND "user"=?');
 	$del->execute(array($id, $_SESSION['tabby_loggedin']));
 	if($del->rowCount() > 0) {
 		return TRUE;
@@ -37,7 +37,7 @@ function del_activity($id) {
 
 function get_activity($actid) {
 	global $db;
-	$get = $db->prepare('SELECT id, name, date FROM activities WHERE id=? AND user=?');
+	$get = $db->prepare('SELECT id, name, date FROM activities WHERE id=? AND "user"=?');
 	$get->execute(array($actid, $_SESSION['tabby_loggedin']));
 	$result = $get->fetch(PDO::FETCH_ASSOC);
 	if(!$result) {

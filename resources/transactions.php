@@ -3,7 +3,7 @@
 function get_transactions_per_activity() {
 	global $db;
 	$activities = array();
-	$get = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.comment AS comment, debts.amount AS amount, debtors.id AS debtorid, debtors.name AS name FROM activities AS a, debts, debtors WHERE a.user=? AND debtors.user=? AND a.id=debts.activity AND debts.debtor=debtors.id ORDER BY activity_date DESC, activity_id DESC');
+	$get = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.comment AS comment, debts.amount AS amount, debtors.id AS debtorid, debtors.name AS name FROM activities AS a, debts, debtors WHERE a."user"=? AND debtors."user"=? AND a.id=debts.activity AND debts.debtor=debtors.id ORDER BY activity_date DESC, activity_id DESC');
 	$get->execute(array($_SESSION['tabby_loggedin'], $_SESSION['tabby_loggedin']));
 	$finstate = get_all_debtor_financial_state();
 	while($row = $get->fetch(PDO::FETCH_ASSOC)) {
@@ -27,7 +27,7 @@ function get_transactions_per_activity() {
 function get_activity_transactions($actid) {
 	global $db;
 	$activity = array();
-	$get = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.id AS debtid, debts.comment AS comment, debts.amount AS amount, debtors.id AS debtorid, debtors.name AS name FROM activities AS a, debts, debtors WHERE a.id=? AND a.user=? AND debtors.user=? AND a.id=debts.activity AND debts.debtor=debtors.id ORDER BY activity_date DESC, activity_id DESC');
+	$get = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.id AS debtid, debts.comment AS comment, debts.amount AS amount, debtors.id AS debtorid, debtors.name AS name FROM activities AS a, debts, debtors WHERE a.id=? AND a."user"=? AND debtors."user"=? AND a.id=debts.activity AND debts.debtor=debtors.id ORDER BY activity_date DESC, activity_id DESC');
 	$get->execute(array($actid, $_SESSION['tabby_loggedin'], $_SESSION['tabby_loggedin']));
 	$finstate = get_all_debtor_financial_state();
 	while($row = $get->fetch(PDO::FETCH_ASSOC)) {
@@ -51,8 +51,8 @@ function get_activity_transactions($actid) {
 function get_transactions_per_debtor() {
 	global $db;
 	$debtors = array();
-	$get_debt = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.comment AS comment, (debts.amount * -1) AS amount, debtors.id AS debtorid, debtors.name AS name, debtors.email AS email FROM activities AS a, debts, debtors WHERE a.user=? AND debtors.user=? AND a.id=debts.activity AND debts.debtor=debtors.id ORDER BY activity_date DESC, activity_id ASC');
-	$get_credit = $db->prepare('SELECT debtors.id AS debtorid, credits.amount AS amount, credits.comment AS comment, credits.date AS date, credits.id AS creditid FROM debtors, credits WHERE debtors.user=? AND debtors.id=credits.debtor ORDER BY date DESC, creditid DESC');
+	$get_debt = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.comment AS comment, (debts.amount * -1) AS amount, debtors.id AS debtorid, debtors.name AS name, debtors.email AS email FROM activities AS a, debts, debtors WHERE a."user"=? AND debtors."user"=? AND a.id=debts.activity AND debts.debtor=debtors.id ORDER BY activity_date DESC, activity_id ASC');
+	$get_credit = $db->prepare('SELECT debtors.id AS debtorid, credits.amount AS amount, credits.comment AS comment, credits.date AS date, credits.id AS creditid FROM debtors, credits WHERE debtors."user"=? AND debtors.id=credits.debtor ORDER BY date DESC, creditid DESC');
 	
 	$get_debt->execute(array($_SESSION['tabby_loggedin'], $_SESSION['tabby_loggedin']));
 	$get_credit->execute(array($_SESSION['tabby_loggedin']));
@@ -101,8 +101,8 @@ function get_transactions_per_debtor() {
 function get_debtor_transactions($debtormail) {
 	global $db;
 	$debtors = array();
-	$get_debt = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.id AS debtid, debts.comment AS comment, (debts.amount * -1) AS amount, debtors.id AS debtorid, debtors.name AS name, debtors.email AS email FROM activities AS a, debts, debtors WHERE a.user=? AND debtors.user=? AND debtors.email=? AND a.id=debts.activity AND debts.debtor=debtors.id ORDER BY activity_date DESC, activity_id ASC');
-	$get_credit = $db->prepare('SELECT debtors.id AS debtorid, credits.amount AS amount, credits.comment AS comment, credits.date AS date, credits.id AS creditid FROM debtors, credits WHERE debtors.user=? AND debtors.email=? AND debtors.id=credits.debtor ORDER BY date DESC, creditid DESC');
+	$get_debt = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.id AS debtid, debts.comment AS comment, (debts.amount * -1) AS amount, debtors.id AS debtorid, debtors.name AS name, debtors.email AS email FROM activities AS a, debts, debtors WHERE a."user"=? AND debtors."user"=? AND debtors.email=? AND a.id=debts.activity AND debts.debtor=debtors.id ORDER BY activity_date DESC, activity_id ASC');
+	$get_credit = $db->prepare('SELECT debtors.id AS debtorid, credits.amount AS amount, credits.comment AS comment, credits.date AS date, credits.id AS creditid FROM debtors, credits WHERE debtors."user"=? AND debtors.email=? AND debtors.id=credits.debtor ORDER BY date DESC, creditid DESC');
 	
 	$get_debt->execute(array($_SESSION['tabby_loggedin'], $_SESSION['tabby_loggedin'], $debtormail));
 	$get_credit->execute(array($_SESSION['tabby_loggedin'], $debtormail));
@@ -140,8 +140,8 @@ function get_debtor_transactions($debtormail) {
 function get_transactions_per_user($debtormail) {
 	global $db;
 	$users = array();
-	$get_debt = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.comment AS comment, (debts.amount * -1) AS amount, debtors.user AS user, users.name AS name, users.email AS email, users.iban AS iban FROM activities AS a, debts, debtors, users WHERE debtors.email=? AND a.id=debts.activity AND debts.debtor=debtors.id AND debtors.user=users.email ORDER BY activity_date DESC, activity_id ASC');
-	$get_credit = $db->prepare('SELECT credits.amount AS amount, credits.comment AS comment, credits.date AS date, credits.id AS creditid, debtors.user AS user FROM debtors, credits WHERE debtors.email=? AND debtors.id=credits.debtor ORDER BY date DESC, creditid DESC');
+	$get_debt = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.comment AS comment, (debts.amount * -1) AS amount, debtors."user" AS "user", users.name AS name, users.email AS email, users.iban AS iban FROM activities AS a, debts, debtors, users WHERE debtors.email=? AND a.id=debts.activity AND debts.debtor=debtors.id AND debtors."user"=users.email ORDER BY activity_date DESC, activity_id ASC');
+	$get_credit = $db->prepare('SELECT credits.amount AS amount, credits.comment AS comment, credits.date AS date, credits.id AS creditid, debtors."user" AS "user" FROM debtors, credits WHERE debtors.email=? AND debtors.id=credits.debtor ORDER BY date DESC, creditid DESC');
 	
 	$get_debt->execute(array($debtormail));
 	$get_credit->execute(array($debtormail));
@@ -180,8 +180,8 @@ function get_transactions_per_user($debtormail) {
 function get_user_transactions_for_debtor($usermail, $debtormail) {
 	global $db;
 	$user = array();
-	$get_debt = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.comment AS comment, (debts.amount * -1) AS amount, debtors.user AS user, users.name AS name, users.email AS email, users.iban AS iban FROM activities AS a, debts, debtors, users WHERE users.email=? AND debtors.email=? AND a.id=debts.activity AND debts.debtor=debtors.id AND debtors.user=users.email ORDER BY activity_date DESC, activity_id ASC');
-	$get_credit = $db->prepare('SELECT credits.amount AS amount, credits.comment AS comment, credits.date AS date, credits.id AS creditid, debtors.user AS user FROM debtors, credits WHERE debtors.user=? AND debtors.email=? AND debtors.id=credits.debtor ORDER BY date DESC, creditid DESC');
+	$get_debt = $db->prepare('SELECT a.id AS activity_id, a.name AS activity_name, a.date AS activity_date, debts.comment AS comment, (debts.amount * -1) AS amount, debtors."user" AS "user", users.name AS name, users.email AS email, users.iban AS iban FROM activities AS a, debts, debtors, users WHERE users.email=? AND debtors.email=? AND a.id=debts.activity AND debts.debtor=debtors.id AND debtors."user"=users.email ORDER BY activity_date DESC, activity_id ASC');
+	$get_credit = $db->prepare('SELECT credits.amount AS amount, credits.comment AS comment, credits.date AS date, credits.id AS creditid, debtors."user" AS "user" FROM debtors, credits WHERE debtors."user"=? AND debtors.email=? AND debtors.id=credits.debtor ORDER BY date DESC, creditid DESC');
 	
 	$get_debt->execute(array($usermail, $debtormail));
 	$get_credit->execute(array($usermail, $debtormail));
@@ -208,8 +208,8 @@ function get_user_transactions_for_debtor($usermail, $debtormail) {
 
 function get_all_debtor_financial_state() {
 	global $db;
-	$get_debt = $db->prepare('SELECT debtors.id AS debtorid, debtors.email AS email, SUM(debts.amount) AS debt FROM debtors, debts WHERE debtors.user=? AND debtors.id=debts.debtor GROUP BY debtorid ORDER BY debtorid');
-	$get_credit = $db->prepare('SELECT debtors.id AS debtorid, SUM(credits.amount) AS credit FROM debtors, credits WHERE debtors.user=? AND debtors.id=credits.debtor GROUP BY debtorid ORDER BY debtorid');
+	$get_debt = $db->prepare('SELECT debtors.id AS debtorid, debtors.email AS email, SUM(debts.amount) AS debt FROM debtors, debts WHERE debtors."user"=? AND debtors.id=debts.debtor GROUP BY debtorid ORDER BY debtorid');
+	$get_credit = $db->prepare('SELECT debtors.id AS debtorid, SUM(credits.amount) AS credit FROM debtors, credits WHERE debtors."user"=? AND debtors.id=credits.debtor GROUP BY debtorid ORDER BY debtorid');
 	$get_activities = $db->prepare('SELECT debts.activity AS id, debts.amount AS amount, activities.date AS date FROM debts, activities WHERE debts.debtor=? AND debts.activity=activities.id ORDER BY date DESC');
 	
 	$get_debt->execute(array($_SESSION['tabby_loggedin']));
@@ -253,8 +253,8 @@ function get_all_debtor_financial_state() {
 
 function get_debtor_financial_state($debtormail) {
 	global $db;
-	$get_debt = $db->prepare('SELECT debtors.id AS debtorid, SUM(debts.amount) AS debt FROM debtors, debts WHERE debtors.user=? AND debtors.email=? AND debtors.id=debts.debtor GROUP BY debtorid ORDER BY debtorid');
-	$get_credit = $db->prepare('SELECT debtors.id AS debtorid, SUM(credits.amount) AS credit FROM debtors, credits WHERE debtors.user=? AND debtors.email=? AND debtors.id=credits.debtor GROUP BY debtorid ORDER BY debtorid');
+	$get_debt = $db->prepare('SELECT debtors.id AS debtorid, SUM(debts.amount) AS debt FROM debtors, debts WHERE debtors."user"=? AND debtors.email=? AND debtors.id=debts.debtor GROUP BY debtorid ORDER BY debtorid');
+	$get_credit = $db->prepare('SELECT debtors.id AS debtorid, SUM(credits.amount) AS credit FROM debtors, credits WHERE debtors."user"=? AND debtors.email=? AND debtors.id=credits.debtor GROUP BY debtorid ORDER BY debtorid');
 	$get_activities = $db->prepare('SELECT debts.activity AS id, debts.amount AS amount, activities.date AS date FROM debts, activities WHERE debts.debtor=? AND debts.activity=activities.id ORDER BY date DESC');
 	
 	$get_debt->execute(array($_SESSION['tabby_loggedin'], $debtormail));
@@ -300,8 +300,8 @@ function get_debtor_financial_state($debtormail) {
 
 function user_have_debtors_in_debt($usermail) {
 	global $db;
-	$get_debt = $db->prepare('SELECT debtors.id AS debtorid, SUM(debts.amount) AS debt FROM debtors, debts WHERE debtors.user=? AND debtors.id=debts.debtor GROUP BY debtorid ORDER BY debtorid');
-	$get_credit = $db->prepare('SELECT debtors.id AS debtorid, SUM(credits.amount) AS credit FROM debtors, credits WHERE debtors.user=? AND debtors.id=credits.debtor GROUP BY debtorid ORDER BY debtorid');
+	$get_debt = $db->prepare('SELECT debtors.id AS debtorid, SUM(debts.amount) AS debt FROM debtors, debts WHERE debtors."user"=? AND debtors.id=debts.debtor GROUP BY debtorid ORDER BY debtorid');
+	$get_credit = $db->prepare('SELECT debtors.id AS debtorid, SUM(credits.amount) AS credit FROM debtors, credits WHERE debtors."user"=? AND debtors.id=credits.debtor GROUP BY debtorid ORDER BY debtorid');
 	
 	$get_debt->execute(array($usermail));
 	$get_credit->execute(array($usermail));
@@ -329,7 +329,7 @@ function add_credit($debtor, $comment, $amount, $date) {
 
 function del_debt($id) {
 	global $db;
-	$check = $db->prepare('SELECT count(*) FROM debts, debtors WHERE debts.id=? AND debtors.user=? AND debtors.id=debts.debtor');
+	$check = $db->prepare('SELECT count(*) FROM debts, debtors WHERE debts.id=? AND debtors."user"=? AND debtors.id=debts.debtor');
 	$check->execute(array($id, $_SESSION['tabby_loggedin']));
 	if($check->fetchColumn() > 0) {
 		$del = $db->prepare('DELETE FROM debts WHERE id=?');
@@ -341,7 +341,7 @@ function del_debt($id) {
 
 function del_credit($id) {
 	global $db;
-	$check = $db->prepare('SELECT count(*) FROM credits, debtors WHERE credits.id=? AND debtors.user=? AND debtors.id=credits.debtor');
+	$check = $db->prepare('SELECT count(*) FROM credits, debtors WHERE credits.id=? AND debtors."user"=? AND debtors.id=credits.debtor');
 	$check->execute(array($id, $_SESSION['tabby_loggedin']));
 	if($check->fetchColumn() > 0) {
 		$del = $db->prepare('DELETE FROM credits WHERE id=?');

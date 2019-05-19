@@ -2,14 +2,14 @@
 
 function get_debtors() {
 	global $db;
-	$get = $db->prepare('SELECT name, email FROM debtors WHERE user=? ORDER BY name');
+	$get = $db->prepare('SELECT name, email FROM debtors WHERE "user"=? ORDER BY name');
 	$get->execute(array($_SESSION['tabby_loggedin']));
 	return $get->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function check_debtor($email) {
 	global $db;
-	$get = $db->prepare('SELECT count(*) FROM debtors WHERE email=? AND user=?');
+	$get = $db->prepare('SELECT count(*) FROM debtors WHERE email=? AND "user"=?');
 	$get->execute(array($email, $_SESSION['tabby_loggedin']));
 	if($get->fetchColumn() == 0) {
 		return TRUE;
@@ -19,19 +19,19 @@ function check_debtor($email) {
 
 function add_debtor($name, $email) {
 	global $db;
-	$insert = $db->prepare('INSERT INTO debtors (name, email, user) VALUES (?,?,?)');
+	$insert = $db->prepare('INSERT INTO debtors (name, email, "user") VALUES (?,?,?)');
 	$insert->execute(array($name, $email, $_SESSION['tabby_loggedin']));
 }
 
 function update_debtor($oldemail, $newname, $newemail) {
 	global $db;
-	$update = $db->prepare('UPDATE debtors SET email=?, name=? WHERE email=? AND user=?');
+	$update = $db->prepare('UPDATE debtors SET email=?, name=? WHERE email=? AND "user"=?');
 	$update->execute(array($newemail, $newname, $oldemail, $_SESSION['tabby_loggedin']));
 }
 
 function delete_debtor($email) {
 	global $db;
-	$delete = $db->prepare('DELETE FROM debtors WHERE email=? AND user=?');
+	$delete = $db->prepare('DELETE FROM debtors WHERE email=? AND "user"=?');
 	$delete->execute(array($email, $_SESSION['tabby_loggedin']));
 	if($delete->errorCode() === '00000') {
 		return TRUE;
@@ -43,13 +43,13 @@ function delete_debtor($email) {
 
 function change_debtor_email($debtor, $email) {
 	global $db;
-	$update = $db->prepare('UPDATE debtors SET email=? WHERE email=? AND user=?');
+	$update = $db->prepare('UPDATE debtors SET email=? WHERE email=? AND "user"=?');
 	$update->execute(array($email, $debtor, $_SESSION['tabby_loggedin']));
 }
 
 function get_debtor_details($email) {
 	global $db;
-	$get = $db->prepare('SELECT * FROM debtors WHERE email=? AND user=?');
+	$get = $db->prepare('SELECT * FROM debtors WHERE email=? AND "user"=?');
 	$get->execute(array($email, $_SESSION['tabby_loggedin']));
 	$result = $get->fetch(PDO::FETCH_ASSOC);
 	return $result;
