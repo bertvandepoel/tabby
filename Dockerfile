@@ -16,6 +16,6 @@ ENV TABBY_SMTP_PASSWORD=''
 ADD ./docker/config.php /app/config.php
 ADD ./docker/ssmtp.sh /opt/docker/provision/entrypoint.d/20-ssmtp.sh
 ADD ./docker/setup.php /opt/docker/provision/entrypoint.d/40-tabby-setup.php
+ADD ./docker/cron-env.sh  /opt/docker/bin/service.d/cron.d/20-cron-env.sh
 RUN echo "php /opt/docker/provision/entrypoint.d/40-tabby-setup.php" > /opt/docker/provision/entrypoint.d/40-tabby-setup.sh
 RUN echo "0 0 * * * application /usr/bin/env php /app/cron.php" > /opt/docker/etc/cron/tabby
-RUN chmod +x /opt/docker/provision/entrypoint.d/20-ssmtp.sh /opt/docker/provision/entrypoint.d/40-tabby-setup.sh
