@@ -13,9 +13,9 @@ try {
 }
 
 if (!@$_SERVER["TABBY_APPLICATION_EMAIL"]) {
-    $application_email = $_SERVER["TABBY_APPLICATION_EMAIL"];
-} else {
     $application_email = "noreply@" . $_SERVER["TABBY_DOMAIN"];
+} else {
+    $application_email = $_SERVER["TABBY_APPLICATION_EMAIL"];
 }
 if (!@$_SERVER["TABBY_ADMIN_EMAIL"]) {
     $admin_email = "root@" . $_SERVER["TABBY_DOMAIN"];
@@ -28,5 +28,3 @@ $reminderurl = $_SERVER["TABBY_PROTOCOL"] . '://' . $_SERVER["TABBY_DOMAIN"] . $
 
 // ini_set('display_errors', '0');
 session_start();
-
-?>
