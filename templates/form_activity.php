@@ -14,6 +14,9 @@
 						<div class="col-sm-3">
 							<input type="date" class="form-control" id="date" name="date" value="<?php echo $filled['date']; ?>">
 						</div>
+						<div class="col-sm-2">
+							<button id="today" class="btn btn-secondary" type="button" onclick="document.getElementById('date').value = '<?php echo date('Y-m-d'); ?>'"><span class="fas fa-calendar-check mr-2"></span>Today</button>
+						</div>
 					</div>
 					<div class="form-group row">
 						<div class="col-sm-12">
