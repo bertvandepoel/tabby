@@ -47,6 +47,10 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 			include('templates/adminconfirm.php');
 		}
 	}
+	elseif(substr($location, 0, 6) == 'token/') {
+		$success = 'It seems you\'re logged in, redirecting you to your debt overview';
+		include('templates/success.php');
+	}
 	elseif($location == 'activities/add') {
 		$debtors = get_debtors();
 		if(isset($_POST['add'])) {
