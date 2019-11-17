@@ -6,6 +6,10 @@
 	<title>Tabby - Friendly tool to manage debt</title>
 	
 	<base href="<?php echo $base_url; ?>">
+	
+	<link rel="apple-touch-icon" sizes="180x180" href="favicon/tabby-180.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="favicon/tabby-32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="favicon/tabby-16.png">
 
 	<link rel="stylesheet" href="bubblegum/css/fontawesome-all.5.6.3.css">
 	<link rel="stylesheet" href="bubblegum/css/bootstrap4-bubblegum.4.3.1.min.css">
