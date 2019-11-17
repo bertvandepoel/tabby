@@ -82,12 +82,13 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 					$user = get_user_details();
 					$amount = str_replace(',', '.', $_POST['amount'][$i]) * 100;
 					add_debt($actid, $debtor['id'], $_POST['comment'][$i], $amount);
+					$finstate = get_debtor_financial_state($debtor['email']);
 					if(isset($_POST['sendmail']) AND $_POST['sendmail'] == 1) {
 						$token = get_debtor_token($debtor['email']);
 						if($token === FALSE) {
 							$token = create_debtor_token($debtor['email']);
 						}
-						email_new_debt($debtor, $user, $_POST['name'], date('d M Y', strtotime($_POST['date'])), $_POST['comment'][$i], $amount, $token);
+						email_new_debt($debtor, $user, $_POST['name'], date('d M Y', strtotime($_POST['date'])), $_POST['comment'][$i], $amount, $finstate['total'], $token);
 					}
 				}
 				$success = 'Your new activity has been added.';
@@ -375,13 +376,14 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 				}
 				else {
 					add_debt($act['id'], $debtor['id'], $_POST['comment'], $amount);
+					$finstate = get_debtor_financial_state($debtor['email']);
 					if(isset($_POST['sendmail'])) {
 						$user = get_user_details();
 						$token = get_debtor_token($debtor['email']);
 						if($token === FALSE) {
 							$token = create_debtor_token($debtor['email']);
 						}
-						email_new_debt($debtor, $user, $act['name'], date('d M Y', strtotime($act['date'])), $_POST['comment'], $amount, $token);
+						email_new_debt($debtor, $user, $act['name'], date('d M Y', strtotime($act['date'])), $_POST['comment'], $amount, $finstate['total'], $token);
 					}
 					$success = 'Debt added.';
 					include('templates/success.php');
