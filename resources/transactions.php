@@ -200,7 +200,7 @@ function get_user_transactions_for_debtor($usermail, $debtormail) {
 		$user['data'][] = array('date' => $row['date'], 'sort' => $row['date'] . $row['creditid'], 'description' => $row['comment'], 'amount' => $row['amount']);
 		$user['total'] += $row['amount'];
 	}
-	usort($user[$key]['data'], function ($a, $b) {
+	usort($user['data'], function ($a, $b) {
 		return (-1 * strcmp($a['sort'], $b['sort']));
 	});
 	return $user;
