@@ -25,8 +25,9 @@
 			min-width: 33rem;
 			max-width: 45rem;
 		}
-		input[type=date]::-webkit-inner-spin-button, input[type=date]::-webkit-outer-spin-button {
+		input[type=date]::-webkit-inner-spin-button, input[type=date]::-webkit-outer-spin-button, input::-webkit-clear-button {
 			-webkit-appearance: none;
+			margin: 0;
 		}
 	</style>
 </head>
