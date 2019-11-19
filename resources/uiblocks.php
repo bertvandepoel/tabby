@@ -159,7 +159,7 @@ function peoplecard($card) {
 							<input type="date" class="form-control" id="<?php echo $card['email']; ?>-date" name="date">
 						</div>
 						<div class="col-md-1 px-1">
-							<button class="btn btn-secondary" type="button" onclick="document.getElementById('<?php echo $card['email']; ?>-date').value = '<?php echo date('Y-m-d'); ?>'"><span class="fas fa-calendar-check"></span></button>
+							<button class="btn btn-secondary btn-sm mt-1" type="button" onclick="document.getElementById('<?php echo $card['email']; ?>-date').value = '<?php echo date('Y-m-d'); ?>'"><span class="fas fa-calendar-check"></span></button>
 						</div>
 						<div class="col-md-4 px-1">
 							<input type="text" class="form-control" name="comment" placeholder="Wire transfer">
