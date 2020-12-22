@@ -93,7 +93,17 @@ function get_transactions_per_debtor() {
 		$debtors[$key]['data'] = array_reverse(array_slice($debtors[$key]['data'], 0, 4, TRUE), true);
 	}
 	usort($debtors, function ($a, $b) {
-		return ($a['total'] < $b['total']) ? -1 : 1;
+		if($a['total'] < $b['total']) {
+			return -1;
+		}
+		elseif($a['total'] > $b['total']) {
+			return 1;
+		}
+		else {
+			// total debt is identical, for example 0
+			// if we don't apply further sorting here, it won't make sense to the user
+			return ($a['data'][0]['date'] > $b['data'][0]['date']) ? -1 : 1;
+		}
 	});
 	return $debtors;
 }
