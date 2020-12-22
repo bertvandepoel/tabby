@@ -38,4 +38,4 @@ This project is licensed under the AGPL license - see the [LICENSE](LICENSE) fil
 
 ## Acknowledgements
 
-Tabby uses the bubblegum bootstrap theme by hackerthemes.com, licensed under the MIT license. Bootstrap 4 includes Font Awesome, which contains files under the CC BY 4.0, SIL OFL and MIT License.
+Tabby uses the bubblegum bootstrap theme by hackerthemes.com, licensed under the MIT license and based on Bootstrap 4. This theme includes Font Awesome, which contains files under the CC BY 4.0, SIL OFL and MIT License.
