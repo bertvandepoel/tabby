@@ -20,7 +20,6 @@ Some small quality of life fixes:
 - Mention total debt in new activity emails, not just the newly added debt
 - Favicons
 - Hide unnecessary layout elements on the chrome/chromium date picker
-- 
 
 version 1.0 - commit 67b554a08bbed216423b8d968c67ddfe8169df2a
 
