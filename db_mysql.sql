@@ -5,60 +5,60 @@ CREATE TABLE `users` (
   `iban` varchar(34) NOT NULL,
   `reminddate` date NULL,
   PRIMARY KEY (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 CREATE TABLE `tokens` (
   `email` varchar(50) NOT NULL,
   `token` varchar(25) NOT NULL,
   PRIMARY KEY (`email`),
-  UNIQUE KEY `token` (`token`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  UNIQUE KEY (`token`)
+);
 
 CREATE TABLE `activities` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(250) NOT NULL,
-  `user` varchar(50) NOT NULL,
+  `owner` varchar(50) NOT NULL,
   `date` date NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `user` (`user`),
-  FOREIGN KEY (`user`) REFERENCES users(email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  KEY (`owner`),
+  FOREIGN KEY (`owner`) REFERENCES users(email)
+);
 
 CREATE TABLE `debtors` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `user` varchar(50) NOT NULL,
+  `owner` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `user` (`user`),
-  KEY `email` (`email`),
-  FOREIGN KEY (`user`) REFERENCES users(email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  KEY (`owner`),
+  KEY (`email`),
+  FOREIGN KEY (`owner`) REFERENCES users(email)
+);
 
 CREATE TABLE `credits` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `debtor` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `debtor` int NOT NULL,
   `comment` varchar(250) NOT NULL,
-  `amount` int(8) NOT NULL,
+  `amount` int NOT NULL,
   `date` date NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `debtor` (`debtor`),
+  KEY (`debtor`),
   FOREIGN KEY (`debtor`) REFERENCES debtors(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 
 CREATE TABLE `debts` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `activity` int(11) NOT NULL,
-  `debtor` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `activity` int NOT NULL,
+  `debtor` int NOT NULL,
   `comment` varchar(250) DEFAULT NULL,
-  `amount` int(8) NOT NULL,
+  `amount` int NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `debtor` (`debtor`),
-  KEY `activity` (`activity`),
+  KEY (`debtor`),
+  KEY (`activity`),
   FOREIGN KEY (`debtor`) REFERENCES debtors(id),
   FOREIGN KEY (`activity`) REFERENCES activities(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 
 CREATE TABLE `pending_users` (
@@ -69,5 +69,13 @@ CREATE TABLE `pending_users` (
   `confirmation` varchar(25) NOT NULL,
   `datetime` datetime NOT NULL,
   PRIMARY KEY (`email`),
-  UNIQUE KEY `confirmation` (`confirmation`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  UNIQUE KEY (`confirmation`)
+);
+
+CREATE TABLE `config` (
+  `id` varchar(50) NOT NULL,
+  `value` TEXT NOT NULL,
+  PRIMARY KEY (`id`)
+);
+INSERT INTO `config` VALUES ('schema', '2');
+INSERT INTO `config` VALUES ('cron', '0');

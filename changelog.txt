@@ -1,0 +1,28 @@
+version 1.1 - commit 0fbfdb027c944c602f5ae96d94855ffae92440f9
+
+Introduces a procedure for installation and upgrades (includes changes to the database structure, configuration file and .htaccess).
+Support for PostgreSQL (includes changes to the database structure).
+Support for webcron.
+Some small quality of life fixes:
+- Sort by the most recent transaction when debt is identical
+- Better introduction text on landing page
+- Clear up text describing the licenses of Bootstrap and Font Awesome
+- Improve URL handling by merging reminderurl and base_url configuration
+- Favicon ico file fallback
+- More semantic link for home icon
+
+version 1.0.1 - commit 75ab9c8d0f69938240146989b6832d4c20a5ee65
+
+Some small quality of life fixes:
+- When logged in, redirect any token link to "My debt"
+- Add a "Today" button to enter the current date in forms
+- Fix sorting issue in detailed overview of a user
+- Mention total debt in new activity emails, not just the newly added debt
+- Favicons
+- Hide unnecessary layout elements on the chrome/chromium date picker
+- 
+
+version 1.0 - commit 67b554a08bbed216423b8d968c67ddfe8169df2a
+
+Very first version of Tabby. 
+Includes all core features of Tabby as well as the striking and user-friendly interface.

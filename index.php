@@ -1,16 +1,150 @@
 <?php
 
+if(!file_exists('config.php')) {
+	include('resources/install.php');
+	
+	include('templates/header.php');
+	include('templates/emptynav.html');
+	if(isset($_POST['submit'])) {
+		$filled = array('db_type_mysql' => 'true', 'db_host' => $_POST['db_host'], 'db_username' => $_POST['db_username'], 'db_password' => $_POST['db_password'], 'db_name' => $_POST['db_name'], 'app_email' => $_POST['app_email'], 'admin_email' => $_POST['admin_email'], 'user_email' => $_POST['user_email'], 'user_name' => $_POST['user_name'], 'user_iban' => $_POST['user_iban'], 'user_password' => $_POST['user_password'], 'base_url' => $_POST['base_url'], 'days' => $_POST['days'], 'cron' => true);
+		
+		$db_type = 'mysql';
+		if($_POST['db_type'] === 'pgsql') {
+			$db_type = 'pgsql';
+			$filled['db_type_mysql'] = false;
+		}
+		$cron_type = 'cron';
+		if($_POST['cron_type'] === 'webcron') {
+			$cron_type = 'webcron';
+			$filled['cron'] = false;
+		}
+		
+		if(!filter_var($_POST['app_email'], FILTER_VALIDATE_EMAIL)) {
+			$error = 'You need to enter a valid application email address';
+			$filled['app_email'] = '';
+		}
+		elseif(!filter_var($_POST['admin_email'], FILTER_VALIDATE_EMAIL)) {
+			$error = 'You need to enter a valid admin email address';
+			$filled['admin_email'] = '';
+		}
+		elseif(!filter_var($_POST['user_email'], FILTER_VALIDATE_EMAIL)) {
+			$error = 'You need to enter a valid account email address';
+			$filled['user_email'] = '';
+		}
+		elseif(strlen($_POST['user_name']) < 5) {
+			$error = 'The full name for your account seems oddly short, are you quite sure you didn\'t misspell it?';
+			$filled['user_name'] = '';
+		}
+		elseif(strlen($_POST['user_iban']) < 12) {
+			$error = 'You need to enter a valid IBAN for your account';
+			$filled['user_iban'] = '';
+		}
+		elseif(strlen($_POST['user_password']) < 8) {
+			$error = 'Let\'s be realistic, a proper password isn\'t that short';
+			$filled['user_password'] = '';
+		}
+		elseif(!filter_var($_POST['base_url'], FILTER_VALIDATE_URL)) {
+			$error = 'Your base URL is not a valid URL';
+			$filled['base_url'] = '';
+		}
+		elseif(intval($_POST['days']) < 1 OR intval($_POST['days']) > 30) {
+			$error = 'Please enter a valid and realistic number of days between reminders';
+			$filled['days'] = '';
+		}
+		else {
+			if($db_type === 'pgsql') {
+				try {
+					$db = new PDO('pgsql:host=' . $_POST['db_host'] . ';dbname=' . $_POST['db_name'], $_POST['db_username'], $_POST['db_password']);
+					$dsn = 'pgsql:host=' . $_POST['db_host'] . ';dbname=' . $_POST['db_name'];
+				} catch (PDOException $e) {
+					$error = 'There was a problem connecting to the database: ' . $e;
+				}
+			}
+			else {
+				try {
+					$db = new PDO('mysql:host=' . $_POST['db_host'] . ';dbname=' . $_POST['db_name'], $_POST['db_username'], $_POST['db_password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+					$dsn = 'mysql:host=' . $_POST['db_host'] . ';dbname=' . $_POST['db_name'];
+				} catch (PDOException $e) {
+					$error = 'There was a problem connecting to the database: ' . $e;
+				}
+			}
+		}
+		
+		if(!isset($error)) {
+			if(!create_db($db_type)) {
+				$error = 'Could not create database structures, please make sure you have the correct rights and permissions.';
+			}
+			elseif(!create_first_user($_POST['user_email'], $_POST['user_name'], $_POST['user_password'], $_POST['user_iban'])) {
+				$error = 'Could not create first user account. This is quite abnormal considering database structure creation did not error.';
+			}
+		}
+		
+		if(isset($error)) {
+			include('templates/error.php');
+			include('templates/form_install.php');
+		}
+		else {
+			$config = create_config($dsn, $_POST['db_username'], $_POST['db_password'], $_POST['app_email'], $_POST['admin_email'], $_POST['base_url'], $_POST['days'], $cron_type);
+			if($config != 'created') {
+				$success = 'Installation completed successfully, but the installer could not write your configuration to config.php. Please follow the instructions below to finish installation.';
+				include('templates/success.php');
+				$title = 'Create a config.php file in the Tabby top directory with the following contents';
+				include('templates/box_config.php');
+			}
+			else {
+				$success = 'Installation completed successfully. You can now start using your installation of Tabby.';
+				include('templates/success.php');
+			}
+			if($cron_type === 'cron') {
+				$title = 'Don\'t forget to install a cronjob. Below is an example for crontab. You can also add a script to /etc/cron.daily or create a systemd timer.';
+				$config = '0 5 * * * php ' . escapeshellarg(realpath('cron.php'));
+				include('templates/box_config.php');
+			}
+			$check_install = check_install($_POST['base_url']);
+			if($check_install !== 'OK') {
+				$title = 'By default, Tabby uses a .htaccess file with mod_rewrite to support semantic URLs and hide the changelog.txt file';
+				$config = '';
+				if($check_install === 'doublefail' OR $check_install === 'regfail'){
+					$config .= 'It seems visits to semantic URLs aren\'t correctly mapped to index.php. If you are running Apache, please verify that mod_rewrite is enabled and either allow .htaccess files ("AllowOverride All" on the Directory context, "AccessFileName .htaccess" globally) or appropriately move the contents of .htaccess to a VirtualHost or Directory context within your configuration. If you are using nginx, add a fallback to index.php in the appropriate try_files statement. Instructions on how to fall back to index.php are easily available online for other webserver software.';
+				}
+				if($check_install === 'doublefail') {
+					$config .= "\n\n" . 'It also seems changelog.txt is publicly available. While this isn\'t a problem in and by itself, the changelog clearly indicates which version of Tabby you are running. If any security issue would turn up in the future, a possible attacker could deduce whether you are vulnerable or not based on the changelog when it\'s available. To prevent this, changelog.txt is redirected to index.php. This also means that you can followed identical instructions for Apache. If .htaccess works correctly or its contents are moved to configuration in the right context, both issues should be resolved. If you are using nginx, a rewrite or return can be used prior to try_files to move visits for changelog.txt to the Tabby base URL. Instructions on how to redirect a specific file are easily available online for other webserver software.';
+				}
+				elseif($check_install === 'changelogfail') {
+					$config .= 'It seems changelog.txt is publicly available. While this isn\'t a problem in and by itself, the changelog clearly indicates which version of Tabby you are running. If any security issue would turn up in the future, a possible attacker could deduce whether you are vulnerable or not based on the changelog when it\'s available. To prevent this, changelog.txt is redirected to index.php. If you are running Apache, it is quite unusual that the mod_rewrite rules are working correctly for semantic URLs but not to protect changelog.txt. If you have made changes to .htaccess or to your Apache configuration, then please check these in further detail. If you are using nginx, a rewrite or return can be used prior to try_files to move visits for changelog.txt to the Tabby base URL. Instructions on how to redirect a specific file are easily available online for other webserver software.';
+				}
+				include('templates/box_config.php');
+			}
+		}	
+	}
+	else {
+		$base_url = 'http://';
+		if(isset($_SERVER['HTTPS']) AND $_SERVER['HTTPS'] === 'on') {
+			$base_url = 'https://';
+		}
+		$base_url .= $_SERVER['HTTP_HOST'];
+		// This is the simplest way to strip index.php?something#something from the current request URI
+		// see https://stackoverflow.com/questions/6283071/in-php-is-there-a-simple-way-to-get-the-directory-part-of-a-uri
+		$base_url .= preg_replace('{/[^/]+$}','/', $_SERVER['REQUEST_URI']);
+		$filled = array('db_type_mysql' => true, 'db_host' => 'localhost', 'db_username' => '', 'db_password' => '', 'db_name' => '', 'app_email' => 'no-reply@' . $_SERVER['HTTP_HOST'], 'admin_email' => '', 'user_email' => '', 'user_name' => '', 'user_iban' => '', 'user_password' => '', 'base_url' => $base_url, 'days' => 5, 'cron' => true);
+		include('templates/form_install.php');
+	}
+	include('templates/footer.php');
+	exit;
+}
+
 include('config.php');
-include('resources/users.php');
 
 $uri = $_SERVER['REQUEST_URI'];
-if (strpos($uri, $base_url) === 0) {
-    $local_uri = substr($uri, strlen($base_url));
+if (strpos($uri, parse_url($base_url, PHP_URL_PATH)) === 0) {
+    $local_uri = substr($uri, strlen(parse_url($base_url, PHP_URL_PATH)));
 }
-$local_uri = explode('?', $local_uri);
-$location = rtrim($local_uri[0], '/');
+$local_uri = strtok($local_uri, '?');
+$location = rtrim($local_uri, '/');
 
 include('templates/header.php');
+include('resources/init.php');
+include('resources/users.php');
 
 if($location == 'logout') {
 	include('templates/emptynav.html');
@@ -548,3 +682,7 @@ else {
 	include('templates/index.html');
 }
 include('templates/footer.php');
+
+if($webcron) {
+	include('cron.php');
+}

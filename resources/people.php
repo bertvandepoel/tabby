@@ -2,14 +2,14 @@
 
 function get_debtors() {
 	global $db;
-	$get = $db->prepare('SELECT name, email FROM debtors WHERE user=? ORDER BY name');
+	$get = $db->prepare('SELECT name, email FROM debtors WHERE owner=? ORDER BY name');
 	$get->execute(array($_SESSION['tabby_loggedin']));
 	return $get->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function check_debtor($email) {
 	global $db;
-	$get = $db->prepare('SELECT count(*) FROM debtors WHERE email=? AND user=?');
+	$get = $db->prepare('SELECT count(*) FROM debtors WHERE email=? AND owner=?');
 	$get->execute(array($email, $_SESSION['tabby_loggedin']));
 	if($get->fetchColumn() == 0) {
 		return TRUE;
@@ -19,19 +19,19 @@ function check_debtor($email) {
 
 function add_debtor($name, $email) {
 	global $db;
-	$insert = $db->prepare('INSERT INTO debtors (name, email, user) VALUES (?,?,?)');
+	$insert = $db->prepare('INSERT INTO debtors (name, email, owner) VALUES (?,?,?)');
 	$insert->execute(array($name, $email, $_SESSION['tabby_loggedin']));
 }
 
 function update_debtor($oldemail, $newname, $newemail) {
 	global $db;
-	$update = $db->prepare('UPDATE debtors SET email=?, name=? WHERE email=? AND user=?');
+	$update = $db->prepare('UPDATE debtors SET email=?, name=? WHERE email=? AND owner=?');
 	$update->execute(array($newemail, $newname, $oldemail, $_SESSION['tabby_loggedin']));
 }
 
 function delete_debtor($email) {
 	global $db;
-	$delete = $db->prepare('DELETE FROM debtors WHERE email=? AND user=?');
+	$delete = $db->prepare('DELETE FROM debtors WHERE email=? AND owner=?');
 	$delete->execute(array($email, $_SESSION['tabby_loggedin']));
 	if($delete->errorCode() === '00000') {
 		return TRUE;
@@ -43,13 +43,13 @@ function delete_debtor($email) {
 
 function change_debtor_email($debtor, $email) {
 	global $db;
-	$update = $db->prepare('UPDATE debtors SET email=? WHERE email=? AND user=?');
+	$update = $db->prepare('UPDATE debtors SET email=? WHERE email=? AND owner=?');
 	$update->execute(array($email, $debtor, $_SESSION['tabby_loggedin']));
 }
 
 function get_debtor_details($email) {
 	global $db;
-	$get = $db->prepare('SELECT * FROM debtors WHERE email=? AND user=?');
+	$get = $db->prepare('SELECT * FROM debtors WHERE email=? AND owner=?');
 	$get->execute(array($email, $_SESSION['tabby_loggedin']));
 	$result = $get->fetch(PDO::FETCH_ASSOC);
 	return $result;
@@ -96,7 +96,7 @@ function reset_token($token) {
 function mail_token($email, $token) {
 	global $base_url;
 	global $application_email;
-	$message = "Hi there,\r\n\r\nYou requested an overview of your debt and credit. You can find that on " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+	$message = "Hi there,\r\n\r\nYou requested an overview of your debt and credit. You can find that on " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 	$headers = 'From: ' . $application_email;
 	mail($email, 'Tabby: you requested an overview', $message, $headers);
 }
@@ -108,10 +108,10 @@ function email_reminder($email, $total, $comment, $token, $user) {
 	update_reminddate();
 	
 	if(is_null($comment)) {
-		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . number_format((-$total / 100), 2) . " euro.\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . number_format((-$total / 100), 2) . " euro.\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 	}
 	else {
-		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . number_format((-$total / 100), 2) . " euro.\r\n\r\nThey added the following message for you \"" . $comment . "\".\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['SERVER_NAME'] . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . number_format((-$total / 100), 2) . " euro.\r\n\r\nThey added the following message for you \"" . $comment . "\".\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 	}
 	
 	$headers = array(
