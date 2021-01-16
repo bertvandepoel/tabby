@@ -4,6 +4,23 @@ Tabby is a tool I made for myself due to lack of practical and unannoying tools 
 
 While initially developing Tabby as mostly a quick little script, I somehow managed to develop it in full. So since it works surprisingly well and has a bunch of features, I ended up FOSSing it. It's something I very much believe in ideologically, and I think it might be useful to others. From time to time, I still add new features to Tabby to make it more convenient for me or if a friend (or a user on GitHub) requests a specific feature that also makes sense to me.
 
+## Table of Contents
+  * [Features](#features)
+  * [Screenshots](#screenshots)
+     * [Landing page](#landing-page)
+     * [Installation form](#installation-form)
+     * [Overview of debt (or credit) of all your contacts](#overview-of-debt-or-credit-of-all-your-contacts)
+     * [Overview of debt by activity](#overview-of-debt-by-activity)
+     * [Reminder page](#reminder-page)
+  * [Requirements](#requirements)
+  * [Installation](#installation)
+     * [Released version](#released-version)
+     * [Git version](#git-version)
+  * [Upgrading](#upgrading)
+  * [Changelog](#changelog)
+  * [License](#license)
+  * [Acknowledgements](#acknowledgements)
+
 ## Features 
 
 * An installation is a private instance owned by an admin
