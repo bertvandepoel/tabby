@@ -1,4 +1,4 @@
-version 1.1 - commit 0fbfdb027c944c602f5ae96d94855ffae92440f9
+version 1.1 - commit 7964df787e6e3cc55f9869d74fa9d9811893a136
 
 Introduces a procedure for installation and upgrades (includes changes to the database structure, configuration file and .htaccess).
 Support for PostgreSQL (includes changes to the database structure).
