@@ -73,18 +73,18 @@ function get_transactions_per_debtor() {
 				$debtors[$row['debtorid']]['more'] = TRUE;
 				continue;
 			}
-			$debtors[$row['debtorid']]['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount'], 'color' => $row['color']);
+			$debtors[$row['debtorid']]['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . '-1-' . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount'], 'color' => $row['color']);
 		}
 		else {
 			$debtors[$row['debtorid']] = array('name' => $row['name'], 'email' => $row['email'], 'total' => $finstate[$row['debtorid']]['total'], 'more' => FALSE, 'data' => array());
-			$debtors[$row['debtorid']]['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount'], 'color' => $row['color']);
+			$debtors[$row['debtorid']]['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . '-1-' . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount'], 'color' => $row['color']);
 		}
 	}
 	while($row = $get_credit->fetch(PDO::FETCH_ASSOC)) {
 		if(count($debtors[$row['debtorid']]['data']) == 4) { // we won't display more than 4 records but just give a link for the details
 			$debtors[$row['debtorid']]['more'] = TRUE;
 		}
-		$debtors[$row['debtorid']]['data'][] = array('date' => $row['date'], 'sort' => $row['date'] . $row['creditid'], 'description' => $row['comment'], 'amount' => $row['amount'], 'color' => 'green');
+		$debtors[$row['debtorid']]['data'][] = array('date' => $row['date'], 'sort' => $row['date'] . '-2-' . $row['creditid'], 'description' => $row['comment'], 'amount' => $row['amount'], 'color' => 'green');
 	}
 	foreach($debtors as $key => $value) {
 		usort($debtors[$key]['data'], function ($a, $b) {
@@ -130,15 +130,15 @@ function get_debtor_transactions($debtormail) {
 			$row['color'] = 'neutral';
 		}
 		if(!empty($result)) {
-			$result['data'][] = array('id' => 'd' . $row['debtid'], 'date' => $row['activity_date'], 'sort' => $row['activity_date'] . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount'], 'color' => $row['color']);
+			$result['data'][] = array('id' => 'd' . $row['debtid'], 'date' => $row['activity_date'], 'sort' => $row['activity_date'] . '-1-' . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount'], 'color' => $row['color']);
 		}
 		else {
 			$result = array('name' => $row['name'], 'email' => $row['email'], 'total' => $finstate['total'], 'more' => FALSE, 'data' => array());
-			$result['data'][] = array('id' => 'd' . $row['debtid'], 'date' => $row['activity_date'], 'sort' => $row['activity_date'] . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount'], 'color' => $row['color']);
+			$result['data'][] = array('id' => 'd' . $row['debtid'], 'date' => $row['activity_date'], 'sort' => $row['activity_date'] . '-1-' . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount'], 'color' => $row['color']);
 		}
 	}
 	while($row = $get_credit->fetch(PDO::FETCH_ASSOC)) {
-		$result['data'][] = array('id' => 'c' . $row['creditid'], 'date' => $row['date'], 'sort' => $row['date'] . $row['creditid'], 'description' => $row['comment'], 'amount' => $row['amount'], 'color' => 'green');
+		$result['data'][] = array('id' => 'c' . $row['creditid'], 'date' => $row['date'], 'sort' => $row['date'] . '-2-' . $row['creditid'], 'description' => $row['comment'], 'amount' => $row['amount'], 'color' => 'green');
 	}
 	usort($result['data'], function ($a, $b) {
 		return (-1 * strcmp($a['sort'], $b['sort']));
@@ -163,19 +163,19 @@ function get_transactions_per_user($debtormail) {
 				$users[$row['owner']]['total'] += $row['amount'];
 				continue;
 			}
-			$users[$row['owner']]['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount']);
+			$users[$row['owner']]['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . '-1-' . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount']);
 			$users[$row['owner']]['total'] += $row['amount'];
 		}
 		else {
 			$users[$row['owner']] = array('user' => $row['owner'], 'name' => $row['name'], 'email' => $row['email'], 'iban' => $row['iban'], 'total' => $row['amount'], 'more' => FALSE, 'data' => array());
-			$users[$row['owner']]['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount']);
+			$users[$row['owner']]['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . '-1-' . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount']);
 		}
 	}
 	while($row = $get_credit->fetch(PDO::FETCH_ASSOC)) {
 		if(count($users[$row['owner']]['data']) == 4) { // we won't display more than 4 records but just give a link for the details
 			$users[$row['owner']]['more'] = TRUE;
 		}
-		$users[$row['owner']]['data'][] = array('date' => $row['date'], 'sort' => $row['date'] . $row['creditid'], 'description' => $row['comment'], 'amount' => $row['amount']);
+		$users[$row['owner']]['data'][] = array('date' => $row['date'], 'sort' => $row['date'] . '-2-' . $row['creditid'], 'description' => $row['comment'], 'amount' => $row['amount']);
 		$users[$row['owner']]['total'] += $row['amount'];
 	}
 	foreach($users as $key => $value) {
@@ -198,16 +198,16 @@ function get_user_transactions_for_debtor($usermail, $debtormail) {
 	
 	while($row = $get_debt->fetch(PDO::FETCH_ASSOC)) {
 		if(!empty($user)) {
-			$user['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount']);
+			$user['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . '-1-' . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount']);
 			$user['total'] += $row['amount'];
 		}
 		else {
 			$user = array('user' => $row['owner'], 'name' => $row['name'], 'email' => $row['email'], 'iban' => $row['iban'], 'total' => $row['amount'], 'data' => array());
-			$user['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount']);
+			$user['data'][] = array('date' => $row['activity_date'], 'sort' => $row['activity_date'] . '-1-' . $row['activity_id'] . $row['comment'], 'description' => $row['activity_name'] . ' - ' . $row['comment'], 'amount' => $row['amount']);
 		}
 	}
 	while($row = $get_credit->fetch(PDO::FETCH_ASSOC)) {
-		$user['data'][] = array('date' => $row['date'], 'sort' => $row['date'] . $row['creditid'], 'description' => $row['comment'], 'amount' => $row['amount']);
+		$user['data'][] = array('date' => $row['date'], 'sort' => $row['date'] . '-2-' . $row['creditid'], 'description' => $row['comment'], 'amount' => $row['amount']);
 		$user['total'] += $row['amount'];
 	}
 	usort($user['data'], function ($a, $b) {
