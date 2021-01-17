@@ -47,10 +47,13 @@ function change_debtor_email($debtor, $email) {
 	$update->execute(array($email, $debtor, $_SESSION['tabby_loggedin']));
 }
 
-function get_debtor_details($email) {
+function get_debtor_details($email, $owner = NULL) {
 	global $db;
+	if(is_null($owner)) {
+		$owner = $_SESSION['tabby_loggedin'];
+	}
 	$get = $db->prepare('SELECT * FROM debtors WHERE email=? AND owner=?');
-	$get->execute(array($email, $_SESSION['tabby_loggedin']));
+	$get->execute(array($email, $owner));
 	$result = $get->fetch(PDO::FETCH_ASSOC);
 	return $result;
 }

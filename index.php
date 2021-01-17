@@ -342,6 +342,7 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 		$usermail = explode('mydebt/detail/', $location);
 		$usermail = $usermail[1];
 		title('Detailed view');
+		include('templates/button_merge.html');
 		detailcard(get_user_transactions_for_debtor($usermail, $_SESSION['tabby_loggedin']), 'user');
 	}
 	elseif($location == 'people/list') {
@@ -492,7 +493,62 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 			$success = 'No one has any debt for you.';
 			include('templates/success.php');
 		}
-		carddeck(get_transactions_per_user($_SESSION['tabby_loggedin']), 'user');
+		else {
+			title('Your debt with other users');
+			include('templates/button_merge.html');
+			carddeck(get_transactions_per_user($_SESSION['tabby_loggedin']), 'user');
+		}
+	}
+	elseif($location == 'merge') {
+		if(isset($_POST['merge'])) {
+			if(check_debtor($_POST['merge'])) {
+				$error = 'Nice try, but that\'s not going to work.';
+				include('templates/error.php');
+			}
+			else {
+				$debt_with_loggedin = get_user_transactions_for_debtor($_SESSION['tabby_loggedin'], $_POST['merge']);
+				$debt_with_other = get_user_transactions_for_debtor($_POST['merge'], $_SESSION['tabby_loggedin']);
+				if($debt_with_loggedin['total'] < 0 AND $debt_with_other['total'] < 0) {
+					$amount = -max($debt_with_loggedin['total'], $debt_with_other['total']);
+					$debtor = get_debtor_details($_SESSION['tabby_loggedin'], $_POST['merge']);
+					add_credit($debtor['id'], $_POST['mergemessage'], $amount, date('Y-m-d'));
+					$debtor = get_debtor_details($_POST['merge']);
+					add_credit($debtor['id'], $_POST['mergemessage'], $amount, date('Y-m-d'));
+					
+					$success = 'The debt with ' . $debtor['name'] . '(' . $debtor['email'] . ') has been merged.';
+					include('templates/success.php');
+				}
+				else {
+					$error = 'You have no mutual debt with this contact or the mutual debt has already been processed.';
+					include('templates/error.php');
+				}
+			}
+		}
+		$mergeable = array();
+		foreach(get_transactions_per_user($_SESSION['tabby_loggedin']) as $otheruser => $debt_with_other) {
+			if(!isset($debt_with_other['total']) OR $debt_with_other['total'] >= 0) {
+				// other user has no debt for currently logged in user
+				continue;
+			}
+			$debt_with_loggedin = get_user_transactions_for_debtor($_SESSION['tabby_loggedin'], $otheruser);
+			if($debt_with_loggedin['total'] < 0) {
+				$debt_after_merge = 'You';
+				if($debt_with_loggedin['total'] < $debt_with_other['total']) {
+					$debt_after_merge = $debt_with_other['name'];
+				}
+				elseif($debt_with_loggedin['total'] == $debt_with_other['total']) {
+					$debt_after_merge = 'No one';
+				}
+				$mergeable[$otheruser] = array('name' => $debt_with_other['name'], 'other_debt' => $debt_with_other['total'], 'loggedin_debt' => $debt_with_loggedin['total'], 'debt_after_merge' => $debt_after_merge);
+			}
+		}
+		if(!empty($mergeable)) {
+			include('templates/table_merge.php');
+		}
+		else {
+			$success = 'You have no mergeable debt. This means that anyone you owe doesn\'t simultaneously owe you on this instance of Tabby.';
+			include('templates/success.php');
+		}
 	}
 	elseif($location == 'activities') {
 		if(isset($_POST['debt'])) {
