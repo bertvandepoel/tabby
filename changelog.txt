@@ -1,4 +1,4 @@
-version 1.1.1
+version 1.1.1 - commit eef6723c2e891162584689158235362e693b586b
 
 Add merge functionality to merge mutual debt (when both the logged in user and another user have debt with each other)
 Small fix: improve sorting when debt and credit are on the same data
