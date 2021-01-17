@@ -1,3 +1,8 @@
+version 1.1.1
+
+Add merge functionality to merge mutual debt (when both the logged in user and another user have debt with each other)
+Small fix: improve sorting when debt and credit are on the same data
+
 version 1.1 - commit 7964df787e6e3cc55f9869d74fa9d9811893a136
 
 Introduces a procedure for installation and upgrades (includes changes to the database structure, configuration file and .htaccess).
