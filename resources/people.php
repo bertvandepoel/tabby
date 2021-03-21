@@ -111,10 +111,10 @@ function email_reminder($email, $total, $comment, $token, $user) {
 	update_reminddate();
 	
 	if(is_null($comment)) {
-		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . number_format((-$total / 100), 2) . " euro.\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . human_friendly_amount(-$total, FALSE) . " euro.\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 	}
 	else {
-		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . number_format((-$total / 100), 2) . " euro.\r\n\r\nThey added the following message for you \"" . $comment . "\".\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+		$message = "Hi there,\r\n\r\nThis is a reminder from " . $user['name'] . ". You owe them " . human_friendly_amount(-$total, FALSE) . " euro.\r\n\r\nThey added the following message for you \"" . $comment . "\".\r\n\r\nYou can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
 	}
 	
 	$headers = array(

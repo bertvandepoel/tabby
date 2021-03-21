@@ -20,8 +20,8 @@
 						echo '<tr>';
 						echo '<form action="merge" method="post">';
 						echo '<td>' . $mergedetail['name'] . ' (' . $otheremail . ')</td>';
-						echo '<td>' . sprintf("%+.2f", number_format($mergedetail['loggedin_debt']/100, 2)) . '</td>';
-						echo '<td>' . sprintf("%+.2f", number_format($mergedetail['other_debt']/100, 2)) . '</td>';
+						echo '<td>' . human_friendly_amount($mergedetail['loggedin_debt']) . '</td>';
+						echo '<td>' . human_friendly_amount($mergedetail['other_debt']) . '</td>';
 						echo '<td>' . $mergedetail['debt_after_merge'] . '</td>';
 						echo '<td><input name="mergemessage" type="text" class="form-control" value ="Merge mutual debt"></td>';
 						echo '<td><button name="merge" type="submit" class="btn btn-outline-danger btn-sm" value="' . $otheremail . '"><span class="fas fa-exchange-alt mr-2"></span>Merge</button></td>';

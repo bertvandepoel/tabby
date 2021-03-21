@@ -73,7 +73,7 @@ function activitycard($card, $debtors) {
 						$badge = 'success';
 					}
 					
-					echo '<li class="list-group-item px-2"><span class="badge badge-' . $badge . ' p-2 float-right">' . number_format($row['amount']/100, 2)  . '</span><span class="font-weight-bold">' . $row['name'] . '</span>: ' . $row['comment'] . '</li>';
+					echo '<li class="list-group-item px-2"><span class="badge badge-' . $badge . ' p-2 float-right">' . human_friendly_amount($row['amount'])  . '</span><span class="font-weight-bold">' . $row['name'] . '</span>: ' . $row['comment'] . '</li>';
 				}
 				?>
 			</ul>
@@ -146,7 +146,7 @@ function peoplecard($card) {
 						$badge = 'success';
 					}
 					
-					echo '<li class="list-group-item px-2"><span class="badge badge-primary p-2 mr-2 float-left">' . date('d M Y', strtotime($row['date'])) . '</span>  <span class="badge badge-' . $badge . ' p-2 float-right">' . sprintf("%+.2f", number_format($row['amount']/100, 2))  . '</span>' . $row['description'] . '</li>';
+					echo '<li class="list-group-item px-2"><span class="badge badge-primary p-2 mr-2 float-left">' . date('d M Y', strtotime($row['date'])) . '</span>  <span class="badge badge-' . $badge . ' p-2 float-right">' . human_friendly_amount($row['amount'])  . '</span>' . $row['description'] . '</li>';
 				}
 				?>
 			</ul>
@@ -183,13 +183,13 @@ function peoplecard($card) {
 				Total: 
 				<?php
 				if($card['total'] > 0) {
-					echo '<span class="text-success">+' . number_format($card['total']/100, 2) . '</span>';
+					echo '<span class="text-success">' . human_friendly_amount($card['total']) . '</span>';
 				}
 				elseif($card['total'] == 0) {
-					echo number_format($card['total']/100, 2);
+					echo human_friendly_amount($card['total']);
 				}
 				else {
-					echo '<span class="text-danger">' . number_format($card['total']/100, 2) . '</span>';
+					echo '<span class="text-danger">' . human_friendly_amount($card['total']) . '</span>';
 				}
 				?>
 				</div>
@@ -213,7 +213,7 @@ function usercard($card) {
 					echo '<li class="list-group-item text-center"><a href="' . $location . '/detail/' . $card['user'] . '" class="btn btn-outline-danger btn-sm">Show all records</a></li>';
 				}
 				foreach($card['data'] as $row) {
-					echo '<li class="list-group-item px-2"><span class="badge badge-primary p-2 mr-2 float-left">' . date('d M Y', strtotime($row['date'])) . '</span>  <span class="badge badge-light p-2 float-right">' . sprintf("%+.2f", number_format($row['amount']/100, 2))  . '</span>' . $row['description'] . '</li>';
+					echo '<li class="list-group-item px-2"><span class="badge badge-primary p-2 mr-2 float-left">' . date('d M Y', strtotime($row['date'])) . '</span>  <span class="badge badge-light p-2 float-right">' . human_friendly_amount($row['amount'])  . '</span>' . $row['description'] . '</li>';
 				}
 				?>
 			</ul>
@@ -227,13 +227,13 @@ function usercard($card) {
 				Total: 
 				<?php
 				if($card['total'] > 0) {
-					echo '<span class="text-success">+' . number_format($card['total']/100, 2) . '</span>';
+					echo '<span class="text-success">' . human_friendly_amount($card['total']) . '</span>';
 				}
 				elseif($card['total'] == 0) {
-					echo number_format($card['total']/100, 2);
+					echo human_friendly_amount($card['total']);
 				}
 				else {
-					echo '<span class="text-danger">' . number_format($card['total']/100, 2) . '</span>';
+					echo '<span class="text-danger">' . human_friendly_amount($card['total']) . '</span>';
 				}
 				?>
 				</div>
@@ -264,7 +264,7 @@ function big_peoplecard($card) {
 						$badge = 'success';
 					}
 					
-					echo '<li class="list-group-item px-3"><span class="badge badge-primary p-2 mr-2 float-left">' . date('d M Y', strtotime($row['date'])) . '</span> <a href="people/detail/' . $card['email'] . '?del=' . $row['id'] . '" class="btn btn-outline-danger btn-sm ml-5 float-right"><span class="fas fa-trash-alt"></span></a> <span class="badge badge-' . $badge . ' p-2 float-right">' . sprintf("%+.2f", number_format($row['amount']/100, 2))  . '</span>' . $row['description'] . '</li>';
+					echo '<li class="list-group-item px-3"><span class="badge badge-primary p-2 mr-2 float-left">' . date('d M Y', strtotime($row['date'])) . '</span> <a href="people/detail/' . $card['email'] . '?del=' . $row['id'] . '" class="btn btn-outline-danger btn-sm ml-5 float-right"><span class="fas fa-trash-alt"></span></a> <span class="badge badge-' . $badge . ' p-2 float-right">' . human_friendly_amount($row['amount'])  . '</span>' . $row['description'] . '</li>';
 				}
 				?>
 			</ul>
@@ -275,13 +275,13 @@ function big_peoplecard($card) {
 				Total: 
 				<?php
 				if($card['total'] > 0) {
-					echo '<span class="text-success">+' . number_format($card['total']/100, 2) . '</span>';
+					echo '<span class="text-success">' . human_friendly_amount($card['total']) . '</span>';
 				}
 				elseif($card['total'] == 0) {
-					echo number_format($card['total']/100, 2);
+					echo human_friendly_amount($card['total']);
 				}
 				else {
-					echo '<span class="text-danger">' . number_format($card['total']/100, 2) . '</span>';
+					echo '<span class="text-danger">' . human_friendly_amount($card['total']) . '</span>';
 				}
 				?>
 				</div>
@@ -312,7 +312,7 @@ function big_activitycard($card) {
 						$badge = 'success';
 					}
 					
-					echo '<li class="list-group-item px-2"> <a href="activities/detail/' . $card['id'] . '?del=' . $row['id'] . '" class="btn btn-outline-danger btn-sm ml-5 float-right"><span class="fas fa-trash-alt"></span></a> <span class="badge badge-' . $badge . ' p-2 float-right">' . number_format($row['amount']/100, 2)  . '</span><span class="font-weight-bold">' . $row['name'] . '</span>: ' . $row['comment'] . '</li>';
+					echo '<li class="list-group-item px-2"> <a href="activities/detail/' . $card['id'] . '?del=' . $row['id'] . '" class="btn btn-outline-danger btn-sm ml-5 float-right"><span class="fas fa-trash-alt"></span></a> <span class="badge badge-' . $badge . ' p-2 float-right">' . human_friendly_amount($row['amount'])  . '</span><span class="font-weight-bold">' . $row['name'] . '</span>: ' . $row['comment'] . '</li>';
 				}
 				?>
 			</ul>
@@ -338,7 +338,7 @@ function big_usercard($card) {
 			<ul class="list-group list-group-flush">
 				<?php
 				foreach($card['data'] as $row) {
-					echo '<li class="list-group-item px-2"><span class="badge badge-primary p-2 mr-2 float-left">' . date('d M Y', strtotime($row['date'])) . '</span>  <span class="badge badge-light p-2 float-right">' . sprintf("%+.2f", number_format($row['amount']/100, 2))  . '</span>' . $row['description'] . '</li>';
+					echo '<li class="list-group-item px-2"><span class="badge badge-primary p-2 mr-2 float-left">' . date('d M Y', strtotime($row['date'])) . '</span>  <span class="badge badge-light p-2 float-right">' . human_friendly_amount($row['amount'])  . '</span>' . $row['description'] . '</li>';
 				}
 				?>
 			</ul>
@@ -352,13 +352,13 @@ function big_usercard($card) {
 				Total: 
 				<?php
 				if($card['total'] > 0) {
-					echo '<span class="text-success">+' . number_format($card['total']/100, 2) . '</span>';
+					echo '<span class="text-success"' . human_friendly_amount($card['total']) . '</span>';
 				}
 				elseif($card['total'] == 0) {
-					echo number_format($card['total']/100, 2);
+					echo human_friendly_amount($card['total']);
 				}
 				else {
-					echo '<span class="text-danger">' . number_format($card['total']/100, 2) . '</span>';
+					echo '<span class="text-danger">' . human_friendly_amount($card['total']) . '</span>';
 				}
 				?>
 				</div>
@@ -366,4 +366,12 @@ function big_usercard($card) {
 		</div>
 	</div>
 	<?php
+}
+
+function human_friendly_amount($amount, $force_signed = TRUE) {
+	$amount = number_format($amount/100, 2, '.', ' ');
+	if($force_signed && $amount > 0) {
+		return '+' . strval($amount);
+	}
+	return strval($amount);
 }
