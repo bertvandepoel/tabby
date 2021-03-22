@@ -17,7 +17,19 @@ function email_new_debt($debtor, $user, $actname, $actdate, $comment, $amount, $
 	global $base_url;
 	global $application_email;
 	
-	$message = "Hi there,\r\n\r\nThis is a notification that " . $user['name'] . " has added \"" . $actname . "\" in Tabby as a new activity that took place on " . $actdate . ". You owe them " . human_friendly_amount($amount, FALSE) . " euro for this activity, they mentioned the following details for you \"" . $comment . "\". This brings your total debt to " . human_friendly_amount(-$total, FALSE) . " euro (if this is negative you have money to spare). You can transfer the money to their bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+	if($total <= -$amount) { // No credit or outstanding debt
+		$message = "Hi there,\r\n\r\nThis is a notification that " . $user['name'] . " has added \"" . $actname . "\" in Tabby as a new activity that took place on " . $actdate . ". You owe them " . human_friendly_amount($amount, FALSE) . " euro for this activity, they mentioned the following details for you: \"" . $comment . "\". This brings your total debt to " . human_friendly_amount(-$total, FALSE) . " euro. You can transfer the money to the following bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all of your debt by visiting " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+	}
+	elseif($total > 0) { // More than enough credit to cover the cost
+		$message = "Hi there,\r\n\r\nThis is a notification that " . $user['name'] . " has added \"" . $actname . "\" in Tabby as a new activity that took place on " . $actdate . ". Your cost is " . human_friendly_amount($amount, FALSE) . " euro for this activity, they mentioned the following details for you: \"" . $comment . "\". Your account had enough outstanding credit to offset this cost. You currently have " . human_friendly_amount($total, FALSE) . " euro of credit left.\r\n\r\nYou can see an overview of all costs and credits by visiting " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+	}
+	elseif($total == 0) { // Just enough credit to cover the debt
+		$message = "Hi there,\r\n\r\nThis is a notification that " . $user['name'] . " has added \"" . $actname . "\" in Tabby as a new activity that took place on " . $actdate . ". Your cost is " . human_friendly_amount($amount, FALSE) . " euro for this activity, they mentioned the following details for you: \"" . $comment . "\". Your account had just enough outstanding credit to offset this cost, so you now have 0.00 euro of credit left.\r\n\r\nYou can see an overview of all costs and credits by visiting " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+	}
+	else { // Some credit, but not enough to fully pay the debt
+		$message = "Hi there,\r\n\r\nThis is a notification that " . $user['name'] . " has added \"" . $actname . "\" in Tabby as a new activity that took place on " . $actdate . ". Your cost is " . human_friendly_amount($amount, FALSE) . " euro for this activity, they mentioned the following details for you: \"" . $comment . "\". Your account had some outstanding credit but not enough to fully offset the cost. This leaves a remaining debt of " . human_friendly_amount(-$total, FALSE) . " euro. You can transfer the money to the following bank account: " . $user['iban'] . "\r\n\r\nYou can see an overview of all costs and credits by visiting " . $base_url . "token/" . $token . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+	}
+	
 	$headers = array(
 		'From' => $application_email,
 		'Reply-To' => $user['email']
