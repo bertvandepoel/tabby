@@ -6,7 +6,7 @@ if(!file_exists('config.php')) {
 	include('templates/header.php');
 	include('templates/emptynav.html');
 	if(isset($_POST['submit'])) {
-		$filled = array('db_type_mysql' => 'true', 'db_host' => $_POST['db_host'], 'db_username' => $_POST['db_username'], 'db_password' => $_POST['db_password'], 'db_name' => $_POST['db_name'], 'app_email' => $_POST['app_email'], 'admin_email' => $_POST['admin_email'], 'user_email' => $_POST['user_email'], 'user_name' => $_POST['user_name'], 'user_iban' => $_POST['user_iban'], 'user_password' => $_POST['user_password'], 'base_url' => $_POST['base_url'], 'days' => $_POST['days'], 'cron' => true);
+		$filled = array('db_type_mysql' => 'true', 'db_host' => $_POST['db_host'], 'db_username' => $_POST['db_username'], 'db_password' => $_POST['db_password'], 'db_name' => $_POST['db_name'], 'app_email' => $_POST['app_email'], 'admin_email' => $_POST['admin_email'], 'user_email' => $_POST['user_email'], 'user_name' => $_POST['user_name'], 'user_iban' => $_POST['user_iban'], 'user_password' => $_POST['user_password'], 'base_url' => $_POST['base_url'], 'currency' => $_POST['currency'], 'days' => $_POST['days'], 'cron' => true);
 		
 		$db_type = 'mysql';
 		if($_POST['db_type'] === 'pgsql') {
@@ -47,6 +47,10 @@ if(!file_exists('config.php')) {
 			$error = 'Your base URL is not a valid URL';
 			$filled['base_url'] = '';
 		}
+		elseif(!in_array($_POST['currency'], $currencies)) {
+			$error = 'Specify a currency from the dropdown or file a GitHub issue if yours is missing';
+			$filled['currency'] = '';
+		}
 		elseif(intval($_POST['days']) < 1 OR intval($_POST['days']) > 30) {
 			$error = 'Please enter a valid and realistic number of days between reminders';
 			$filled['days'] = '';
@@ -84,7 +88,7 @@ if(!file_exists('config.php')) {
 			include('templates/form_install.php');
 		}
 		else {
-			$config = create_config($dsn, $_POST['db_username'], $_POST['db_password'], $_POST['app_email'], $_POST['admin_email'], $_POST['base_url'], $_POST['days'], $cron_type);
+			$config = create_config($dsn, $_POST['db_username'], $_POST['db_password'], $_POST['app_email'], $_POST['admin_email'], $_POST['base_url'], $_POST['currency'], $_POST['days'], $cron_type);
 			if($config != 'created') {
 				$success = 'Installation completed successfully, but the installer could not write your configuration to config.php. Please follow the instructions below to finish installation.';
 				include('templates/success.php');
@@ -126,7 +130,7 @@ if(!file_exists('config.php')) {
 		// This is the simplest way to strip index.php?something#something from the current request URI
 		// see https://stackoverflow.com/questions/6283071/in-php-is-there-a-simple-way-to-get-the-directory-part-of-a-uri
 		$base_url .= preg_replace('{/[^/]+$}','/', $_SERVER['REQUEST_URI']);
-		$filled = array('db_type_mysql' => true, 'db_host' => 'localhost', 'db_username' => '', 'db_password' => '', 'db_name' => '', 'app_email' => 'no-reply@' . $_SERVER['HTTP_HOST'], 'admin_email' => '', 'user_email' => '', 'user_name' => '', 'user_iban' => '', 'user_password' => '', 'base_url' => $base_url, 'days' => 5, 'cron' => true);
+		$filled = array('db_type_mysql' => true, 'db_host' => 'localhost', 'db_username' => '', 'db_password' => '', 'db_name' => '', 'app_email' => 'no-reply@' . $_SERVER['HTTP_HOST'], 'admin_email' => '', 'user_email' => '', 'user_name' => '', 'user_iban' => '', 'user_password' => '', 'base_url' => $base_url, 'currency' => '', 'days' => 5, 'cron' => true);
 		include('templates/form_install.php');
 	}
 	include('templates/footer.php');

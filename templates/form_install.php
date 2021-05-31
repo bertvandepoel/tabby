@@ -71,7 +71,7 @@
 						</div>
 					</div>
 					<div class="form-group row">
-						<label for="user_iban" class="col-sm-4 col-form-label">IBAN</label>
+						<label for="user_iban" class="col-sm-4 col-form-label">IBAN <span data-toggle="tooltip" data-placement="top" title="" data-original-title="International Bank Account Number. Does your country not use IBANs for bank transfers? Please file a bug on GitHub to explain your local situation."><span class="fas fa-question-circle"></span></span></label>
 						<div class="col-sm-8">
 							<input type="text" class="form-control" id="user_iban" name="user_iban" value="<?php echo $filled['user_iban']; ?>">
 						</div>
@@ -88,6 +88,23 @@
 						<label for="base_url" class="col-sm-4 col-form-label">Base URL</label>
 						<div class="col-sm-8">
 							<input type="text" class="form-control" id="base_url" name="base_url" value="<?php echo $filled['base_url']; ?>">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="base_url" class="col-sm-4 col-form-label">Currency <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tabby was developed with Euro in mind and later adapted. Is your currency missing or are certain changes necessary for your currency to make sense? Please file a bug on GitHub with detailed explanation."><span class="fas fa-question-circle"></span></span></label>
+						<div class="col-sm-8">
+							<select name="currency">
+								<?php 
+								foreach($currencies as $symbol) {
+									if($filled['currency'] == $symbol) {
+										echo '<option value="' . $symbol . '" selected>' . $symbol . '</option>';
+									}
+									else {
+										echo '<option value="' . $symbol . '">' . $symbol . '</option>';
+									}
+								}
+								?>
+							</select>
 						</div>
 					</div>
 					<div class="form-group row">

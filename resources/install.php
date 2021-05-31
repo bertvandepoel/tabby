@@ -26,7 +26,7 @@ function create_first_user($email, $name, $password, $iban) {
 	return TRUE;
 }
 
-function create_config($dsn, $db_username, $db_password, $app_email, $admin_email, $base_url, $days, $cron_type) {
+function create_config($dsn, $db_username, $db_password, $app_email, $admin_email, $base_url, $currency, $days, $cron_type) {
 	$config = '<?php
 
 $dsn = "' . addslashes($dsn) . '";
@@ -36,6 +36,7 @@ $db_password = "' . addslashes($db_password) . '";
 $application_email = "' . addslashes($app_email) . '";
 $admin_email = "' . addslashes($admin_email) . '";
 $base_url = "' . addslashes($base_url) . '";
+$currency = "' . addslashes($currency) . '";
 $days = ' . intval($days) . ';
 ';
 	if($cron_type === 'webcron') {
@@ -66,3 +67,5 @@ function check_install($base_url) {
 	}
 	return 'changelogfail';
 }
+
+$currencies = ['€', '£', '$', '¥', '₽', '₱', '₨'];

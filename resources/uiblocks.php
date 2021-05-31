@@ -368,10 +368,20 @@ function big_usercard($card) {
 	<?php
 }
 
-function human_friendly_amount($amount, $force_signed = TRUE) {
+function human_friendly_amount($amount, $force_signed = TRUE, $with_currency = FALSE) {
+	global $currency;
 	$amount = number_format($amount/100, 2, '.', ' ');
-	if($force_signed && $amount > 0) {
+	if($force_signed && $with_currency && $amount > 0) {
+		return '+' . $currency . strval($amount);
+	}
+	elseif($force_signed && $amount > 0) {
 		return '+' . strval($amount);
+	}
+	elseif($with_currency && $amount < 0) {
+		return '-' . $currency . strval(-$amount);
+	}
+	elseif($with_currency) {
+		return $currency . strval($amount);
 	}
 	return strval($amount);
 }

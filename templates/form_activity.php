@@ -47,7 +47,7 @@
 							</div>
 							<div class="col-sm-2 input-group px-1 pl-2">
 								<div class="input-group-prepend">
-									<div class="input-group-text">€</div>
+									<div class="input-group-text"><?php echo $currency; ?></div>
 								</div>
 								<input type="text" class="form-control" id="inlineFormInputGroup" placeholder="13.20" name="amount[]">
 							</div>
@@ -82,7 +82,7 @@
 			</div>
 			<div class="col-sm-2 input-group px-1 pl-2">
 				<div class="input-group-prepend">
-					<div class="input-group-text">€</div>
+					<div class="input-group-text"><?php echo $currency; ?></div>
 				</div>
 				<input type="text" class="form-control" id="inlineFormInputGroup" placeholder="13.20" name="amount[]">
 			</div>
