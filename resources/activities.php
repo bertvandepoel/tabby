@@ -1,9 +1,12 @@
 <?php
 
-function add_activity($name, $date) {
+function add_activity($name, $date, $owner = NULL) {
 	global $db;
+	if(is_null($owner)) {
+		$owner = $_SESSION['tabby_loggedin'];
+	}
 	$insert = $db->prepare('INSERT INTO activities (name, owner, date) VALUES (?,?,?)');
-	$insert->execute(array($name, $_SESSION['tabby_loggedin'], $date));
+	$insert->execute(array($name, $owner, $date));
 	return $db->lastInsertId();
 }
 

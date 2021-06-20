@@ -162,6 +162,7 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 	include('resources/transactions.php');
 	include('resources/people.php');
 	include('resources/activities.php');
+	include('resources/recurring.php');
 	if(substr($location, 0, 13) == 'adminconfirm/') {
 		$confirmation = explode('adminconfirm/', $location);
 		$confirmation = $confirmation[1];
@@ -188,6 +189,85 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 	elseif(substr($location, 0, 6) == 'token/') {
 		$success = 'It seems you\'re logged in, redirecting you to your debt overview';
 		include('templates/success.php');
+	}
+	elseif($location == 'recurring/add') {
+		$debtors = get_debtors();
+		if(isset($_POST['add'])) {
+			if(strlen($_POST['name']) < 2) {
+				$error = 'Your recurring expense needs a name.';
+				include('templates/error.php');
+				$filled = array('name' => '', 'amount' => $_POST['amount'], 'frequency' => (isset($_POST['frequency'])) ? $_POST['frequency'] : '', 'frequency_days' => $_POST['frequency_days'], 'date' => $_POST['date']);
+				include('templates/form_recurring.php');
+			}
+			elseif(strlen($_POST['amount']) < 1) {
+				$error = 'Your recurring expense needs an associated cost.';
+				include('templates/error.php');
+				$filled = array('name' => $_POST['name'], 'amount' => '', 'frequency' => (isset($_POST['frequency'])) ? $_POST['frequency'] : '', 'frequency_days' => $_POST['frequency_days'], 'date' => $_POST['date']);
+				include('templates/form_recurring.php');
+			}
+			elseif(!isset($_POST['frequency'])) {
+				$error = 'Your should indicate how frequent this expense should be applied.';
+				include('templates/error.php');
+				$filled = array('name' => $_POST['name'], 'amount' => $_POST['amount'], 'frequency' => '', 'frequency_days' => $_POST['frequency_days'], 'date' => $_POST['date']);
+				include('templates/form_recurring.php');
+			}
+			elseif($_POST['frequency'] == 'days' AND intval($_POST['frequency_days']) < 1) {
+				$error = 'You should enter a number of days larger than 0 if the frequency of your recurring expense is a custom amount of days.';
+				include('templates/error.php');
+				$filled = array('name' => $_POST['name'], 'amount' => $_POST['amount'], 'frequency' => 'days', 'frequency_days' => '', 'date' => $_POST['date']);
+				include('templates/form_recurring.php');
+			}
+			elseif($_POST['frequency'] != 'days' AND intval($_POST['frequency_days']) > 0) {
+				$error = 'You cannot select weekly, monthly or yearly frequency and then still specify a custom amount of days. Either empty the days field or select the custom amount of days frequency.';
+				include('templates/error.php');
+				$filled = array('name' => $_POST['name'], 'amount' => $_POST['amount'], 'frequency' => (isset($_POST['frequency'])) ? $_POST['frequency'] : '', 'frequency_days' => $_POST['frequency_days'], 'date' => $_POST['date']);
+				include('templates/form_recurring.php');
+			}
+			elseif(!strtotime($_POST['date'])) {
+				$error = 'Your recurring expense needs a date.';
+				include('templates/error.php');
+				$filled = array('name' => $_POST['name'], 'amount' => $_POST['amount'], 'frequency' => (isset($_POST['frequency'])) ? $_POST['frequency'] : '', 'frequency_days' => $_POST['frequency_days'], 'date' => '');
+				include('templates/form_recurring.php');
+			}
+			elseif(strtotime($_POST['date']) < strtotime(date('d-m-Y'))) {
+				$error = 'Your recurring expense needs a date.';
+				include('templates/error.php');
+				$filled = array('name' => $_POST['name'], 'amount' => $_POST['amount'], 'frequency' => (isset($_POST['frequency'])) ? $_POST['frequency'] : '', 'frequency_days' => $_POST['frequency_days'], 'date' => '');
+				include('templates/form_recurring.php');
+			}
+			elseif(check_debtor($_POST['debtor'][0])) {
+				$error = 'Your recurring expense needs at least one contact.';
+				include('templates/error.php');
+				$filled = array('name' => $_POST['name'], 'amount' => $_POST['amount'], 'frequency' => (isset($_POST['frequency'])) ? $_POST['frequency'] : '', 'frequency_days' => $_POST['frequency_days'], 'date' => $_POST['date']);
+				include('templates/form_recurring.php');
+			}
+			else {
+				$amount = str_replace(',', '.', $_POST['amount']) * 100;
+				$frequency = frequency_to_dateintervalstring($_POST['frequency'], $_POST['frequency_days']);
+				$debtors = array();
+				foreach($_POST['debtor'] as $debtor) {
+					if(!check_debtor($debtor)) {
+						$debtor_details = get_debtor_details($debtor);
+						$debtors[] = $debtor_details['id'];
+					}
+				}
+				$recurid = add_recurring($_POST['name'], $amount, $_POST['date'], $frequency, $debtors);
+				if($_POST['date'] == date('Y-m-d')) {
+					execute_recurring($recurid);
+				}
+				$success = 'Your new recurring expense has been added.';
+				$redirect = 'recurring';
+				include('templates/success.php');
+			}
+		}
+		elseif($debtors == array()) {
+			$error = 'You don\'t have any contacts. You should fix that first before trying to register debt.';
+			include('templates/error.php');
+		}
+		else {
+			$filled = array('name' => '', 'amount' => '', 'frequency' => '', 'frequency_days' => '', 'date' => '');
+			include('templates/form_recurring.php');
+		}
 	}
 	elseif($location == 'activities/add') {
 		$debtors = get_debtors();
@@ -240,7 +320,6 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 		}
 		else {
 			$filled = array('name' => '', 'date' => '');
-			$debtors = get_debtors();
 			include('templates/form_activity.php');
 		}
 	}
@@ -291,6 +370,27 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 		$actid = $actid[1];
 		title('Detailed view');
 		detailcard(get_activity_transactions($actid), 'activities');
+	}
+	elseif(substr($location, 0, 17) == 'recurring/delete/') {
+		if(isset($_POST['delete'])) {
+			$recurringid = explode('recurring/delete/', $location);
+			$recurringid = $recurringid[1];
+			if(del_recurring($recurringid)) {
+				$success = 'Your recurring expense has been deleted.';
+				$redirect = 'recurring';
+				include('templates/success.php');
+			}
+			else {
+				$error = 'Sure you haven\'t deleted that already?';
+				include('templates/error.php');
+			}
+		}
+		else {
+			$what = 'recurring expense';
+			$warning = 'This will not delete past occurences of this recurring expense, but remove all future runs.';
+			$backlink = 'recurring';
+			include('templates/confirm_delete.php');
+		}
 	}
 	elseif(substr($location, 0, 18) == 'activities/delete/') {
 		//confirm before delete, only delete activity because cascade
@@ -400,6 +500,41 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 			}
 		}
 		include('templates/form_people_edit.php');
+	}
+	elseif(substr($location, 0, 15) == 'recurring/edit/') {
+		$recurringid = explode('recurring/edit/', $location);
+		$recurringid = $recurringid[1];
+		if(isset($_POST['edit'])) {
+			if(strlen($_POST['name']) < 2) {
+				$error = 'Your recurring expense needs a name.';
+				include('templates/error.php');
+			}
+			elseif(strlen($_POST['amount']) < 1) {
+				$error = 'Your recurring expense needs an associated cost.';
+				include('templates/error.php');
+			}
+			elseif(check_any_debtors($_POST['debtor'])) {
+				$error = 'Your recurring expense needs at least one contact.';
+				include('templates/error.php');
+			}
+			else {
+				$amount = str_replace(',', '.', $_POST['amount']) * 100;
+				$debtors = array();
+				foreach($_POST['debtor'] as $debtor) {
+					if(!check_debtor($debtor)) {
+						$debtor_details = get_debtor_details($debtor);
+						$debtors[] = $debtor_details['id'];
+					}
+				}
+				update_recurring($recurringid, $_POST['name'], $amount, $debtors);
+				$success = 'Your recurring expense has been updated.';
+				$redirect = 'recurring';
+				include('templates/success.php');
+			}
+		}
+		$filled = get_recurring($recurringid);
+		$debtors = get_debtors();
+		include('templates/form_recurring_edit.php');
 	}
 	elseif($location == 'remind') {
 		$user = get_user_details();
@@ -553,6 +688,10 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 			$success = 'You have no mergeable debt. This means that anyone you owe doesn\'t simultaneously owe you on this instance of Tabby.';
 			include('templates/success.php');
 		}
+	}
+	elseif($location == 'recurring') {
+		$recurring = get_user_recurring();
+		include('templates/table_recurring.php');
 	}
 	elseif($location == 'activities') {
 		if(isset($_POST['debt'])) {

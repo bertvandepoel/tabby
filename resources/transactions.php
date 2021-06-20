@@ -261,14 +261,17 @@ function get_all_debtor_financial_state() {
 	return $results;
 }
 
-function get_debtor_financial_state($debtormail) {
+function get_debtor_financial_state($debtormail, $owner = NULL) {
 	global $db;
+	if(is_null($owner)) {
+		$owner = $_SESSION['tabby_loggedin'];
+	}
 	$get_debt = $db->prepare('SELECT debtors.id AS debtorid, SUM(debts.amount) AS debt FROM debtors, debts WHERE debtors.owner=? AND debtors.email=? AND debtors.id=debts.debtor GROUP BY debtorid ORDER BY debtorid');
 	$get_credit = $db->prepare('SELECT debtors.id AS debtorid, SUM(credits.amount) AS credit FROM debtors, credits WHERE debtors.owner=? AND debtors.email=? AND debtors.id=credits.debtor GROUP BY debtorid ORDER BY debtorid');
 	$get_activities = $db->prepare('SELECT debts.activity AS id, debts.amount AS amount, activities.date AS date FROM debts, activities WHERE debts.debtor=? AND debts.activity=activities.id ORDER BY date DESC');
 	
-	$get_debt->execute(array($_SESSION['tabby_loggedin'], $debtormail));
-	$get_credit->execute(array($_SESSION['tabby_loggedin'], $debtormail));
+	$get_debt->execute(array($owner, $debtormail));
+	$get_credit->execute(array($owner, $debtormail));
 	$debt = $get_debt->fetch(PDO::FETCH_ASSOC);
 	$credit = $get_credit->fetch(PDO::FETCH_ASSOC);
 	$debtorid = $debt['debtorid'];

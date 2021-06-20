@@ -69,5 +69,26 @@ switch ($schema) {
 		$db->query('INSERT INTO `config` VALUES (\'schema\', \'2\');');
 		echo '.';
 		$db->query('INSERT INTO `config` VALUES (\'cron\', \'0\');');
-		echo "All queries have been executed. Database is now on schema version 2\n\n";
+		echo "\nAll queries have been executed. Database is now on schema version 2\n\n";
+	case 2:
+		echo "Upgrading database schema version 2 to version 3\n";
+		if(strpos($dsn, 'mysql:') === 0) {
+			$db->query('CREATE TABLE `recurring` ( `id` int NOT NULL AUTO_INCREMENT, `name` varchar(250) NOT NULL, `owner` varchar(50) NOT NULL, `amount` int NOT NULL, `start` date NOT NULL, `frequency` varchar(5) NOT NULL, `lastrun` date DEFAULT NULL, PRIMARY KEY (`id`), KEY (`owner`), KEY (`lastrun`), FOREIGN KEY (`owner`) REFERENCES users(email) );');
+			echo '.';
+			$db->query('CREATE TABLE `recurring_debtors` ( `recurringid` int NOT NULL, `debtor` int NOT NULL, PRIMARY KEY (`recurringid`, `debtor`), FOREIGN KEY (`recurringid`) REFERENCES recurring(id)  ON DELETE CASCADE, FOREIGN KEY (`debtor`) REFERENCES debtors(id) );');
+			echo '.';
+		}
+		else {
+			$db->query('CREATE TABLE "recurring" ( "id" serial, "name" varchar(250) NOT NULL, "owner" varchar(50) NOT NULL, "amount" integer NOT NULL, "start" date NOT NULL, "frequency" varchar(5) NOT NULL, "lastrun" date DEFAULT NULL, PRIMARY KEY ("id"), FOREIGN KEY ("owner") REFERENCES users(email) );');
+			echo '.';
+			$db->query('CREATE INDEX ON "recurring" ("owner");');
+			echo '.';
+			$db->query('CREATE INDEX ON "recurring" ("lastrun");');
+			echo '.';
+			$db->query('CREATE TABLE "recurring_debtors" ( "recurringid" integer NOT NULL, "debtor" integer NOT NULL, PRIMARY KEY ("recurringid", "debtor"), FOREIGN KEY ("recurringid") REFERENCES recurring(id)  ON DELETE CASCADE, FOREIGN KEY ("debtor") REFERENCES debtors(id) );');
+			echo '.';
+		}
+		$db->query('UPDATE config SET value=\'3\' WHERE id=\'schema\';');
+		echo '.';
+		echo "\nAll queries have been executed. Database is now on schema version 3\n\n";
 }

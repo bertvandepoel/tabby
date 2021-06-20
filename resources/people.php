@@ -2,7 +2,7 @@
 
 function get_debtors() {
 	global $db;
-	$get = $db->prepare('SELECT name, email FROM debtors WHERE owner=? ORDER BY name');
+	$get = $db->prepare('SELECT id, name, email FROM debtors WHERE owner=? ORDER BY name');
 	$get->execute(array($_SESSION['tabby_loggedin']));
 	return $get->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -15,6 +15,18 @@ function check_debtor($email) {
 		return TRUE;
 	}
 	return FALSE;
+}
+
+function check_any_debtors($emails) {
+	global $db;
+	$get = $db->prepare('SELECT count(*) FROM debtors WHERE email=? AND owner=?');
+	foreach($emails as $email) {
+		$get->execute(array($email, $_SESSION['tabby_loggedin']));
+		if($get->fetchColumn() > 0) {
+			return FALSE;
+		}
+	}
+	return T;
 }
 
 function add_debtor($name, $email) {

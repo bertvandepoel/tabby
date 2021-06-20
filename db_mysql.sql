@@ -61,6 +61,29 @@ CREATE TABLE `debts` (
 );
 
 
+CREATE TABLE `recurring` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) NOT NULL,
+  `owner` varchar(50) NOT NULL,
+  `amount` int NOT NULL,
+  `start` date NOT NULL,
+  `frequency` varchar(5) NOT NULL,
+  `lastrun` date DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY (`owner`),
+  KEY (`lastrun`),
+  FOREIGN KEY (`owner`) REFERENCES users(email)
+);
+
+CREATE TABLE `recurring_debtors` (
+  `recurringid` int NOT NULL,
+  `debtor` int NOT NULL,
+  PRIMARY KEY (`recurringid`, `debtor`),
+  FOREIGN KEY (`recurringid`) REFERENCES recurring(id)  ON DELETE CASCADE,
+  FOREIGN KEY (`debtor`) REFERENCES debtors(id)
+);
+
+
 CREATE TABLE `pending_users` (
   `email` varchar(50) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -77,5 +100,5 @@ CREATE TABLE `config` (
   `value` TEXT NOT NULL,
   PRIMARY KEY (`id`)
 );
-INSERT INTO `config` VALUES ('schema', '2');
+INSERT INTO `config` VALUES ('schema', '3');
 INSERT INTO `config` VALUES ('cron', '0');

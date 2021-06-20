@@ -97,10 +97,13 @@ function user_exists($email) {
 	return FALSE;
 }
 
-function get_user_details() {
+function get_user_details($email = NULL) {
 	global $db;
+	if(is_null($email)) {
+		$email = $_SESSION['tabby_loggedin'];
+	}
 	$get = $db->prepare('SELECT email, name, iban, reminddate FROM users WHERE email=?');
-	$get->execute(array($_SESSION['tabby_loggedin']));
+	$get->execute(array($email));
 	return $get->fetch(PDO::FETCH_ASSOC);
 }
 

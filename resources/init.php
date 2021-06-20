@@ -2,7 +2,7 @@
 
 try {
 	if(is_int(strpos($dsn, 'mysql'))) {
-		$db = new PDO($dsn, $db_username, $db_password, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+		$db = new PDO($dsn, $db_username, $db_password, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8', PDO::MYSQL_ATTR_FOUND_ROWS => TRUE));
 	}
 	else {
 		$db = new PDO($dsn, $db_username, $db_password);

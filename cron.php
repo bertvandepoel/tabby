@@ -4,6 +4,10 @@ include_once('config.php');
 include_once('resources/init.php');
 include_once('resources/users.php');
 include_once('resources/transactions.php');
+include_once('resources/recurring.php');
+include_once('resources/activities.php');
+include_once('resources/people.php');
+include_once('resources/uiblocks.php');
 
 $check = $db->prepare('SELECT value FROM config WHERE id=?');
 $check->execute(array('cron'));
@@ -23,6 +27,14 @@ if(date('Y-m-d') !== date('Y-m-d', $result['value'])){
 			
 			$headers = 'From: ' . $application_email;
 			mail($user['email'], 'Tabby: time to send reminders', $message, $headers);
+		}
+	}
+	
+	$recurring_expenses = get_all_recurring();
+	
+	foreach($recurring_expenses as $recurring_expense) {
+		if(strtotime(get_nextrun($recurring_expense['start'], $recurring_expense['frequency'], $recurring_expense['lastrun'])) <= strtotime(date('Y-m-d'))) {
+			execute_recurring($recurring_expense['id']);
 		}
 	}
 	
