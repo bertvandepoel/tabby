@@ -624,7 +624,7 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 				include('templates/error.php');
 			}
 		}
-		$filled = array('name' => $user['name'], 'iban' => $user['iban']);
+		$filled = array('email' => $user['email'], 'name' => $user['name'], 'iban' => $user['iban']);
 		include('templates/form_profile.php');
 	}
 	elseif($location == 'mydebt') {
