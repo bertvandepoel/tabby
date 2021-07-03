@@ -95,6 +95,15 @@ CREATE TABLE `pending_users` (
   UNIQUE KEY (`confirmation`)
 );
 
+CREATE TABLE `aliases` (
+  `email` varchar(50) NOT NULL,
+  `owner` varchar(50) NOT NULL,
+  `unconfirmed` varchar(25) NULL,
+  KEY (`owner`),
+  FOREIGN KEY (`owner`) REFERENCES users(email),
+  UNIQUE KEY (`unconfirmed`)
+);
+
 CREATE TABLE `config` (
   `id` varchar(50) NOT NULL,
   `value` TEXT NOT NULL,

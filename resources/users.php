@@ -107,6 +107,76 @@ function get_user_details($email = NULL) {
 	return $get->fetch(PDO::FETCH_ASSOC);
 }
 
+function get_user_aliases() {
+	global $db;
+	$get = $db->prepare('SELECT email, unconfirmed FROM aliases WHERE owner=? ORDER BY email');
+	$get->execute(array($_SESSION['tabby_loggedin']));
+	return $get->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function get_confirmed_aliases() {
+	global $db;
+	$get = $db->prepare('SELECT email FROm aliases WHERE owner=? AND unconfirmed IS NULL ORDER BY email');
+	$get->execute(array($_SESSION['tabby_loggedin']));
+	return $get->fetchAll(PDO::FETCH_COLUMN);
+}
+
+function add_user_alias($email) {
+	global $db;
+	$aliastoken = str_rand(25);
+	$insert = $db->prepare('INSERT INTO aliases VALUES (?,?,?)');
+	$insert->execute(array($email, $_SESSION['tabby_loggedin'], $aliastoken));
+	email_alias_confirmation($email, $aliastoken);
+}
+
+function validate_user_alias($email) {
+	global $db;
+	global $application_email;
+	global $admin_email;
+	if($email == $application_email OR $email == $admin_email) {
+		return FALSE;
+	}
+	$get = $db->prepare('SELECT count(*) AS count FROM aliases WHERE email=?');
+	$get->execute(array($email));
+	$result = $get->fetch(PDO::FETCH_ASSOC);
+	if($result['count'] > 0) {
+		return FALSE;
+	}
+	$get = $db->prepare('SELECT count(*) AS count FROM users WHERE email=?');
+	$get->execute(array($email));
+	$result = $get->fetch(PDO::FETCH_ASSOC);
+	if($result['count'] > 0) {
+		return FALSE;
+	}
+	$get = $db->prepare('SELECT count(*) AS count FROM pending_users WHERE email=?');
+	$get->execute(array($email));
+	$result = $get->fetch(PDO::FETCH_ASSOC);
+	if($result['count'] > 0) {
+		return FALSE;
+	}
+	return TRUE;
+}
+
+function confirm_user_alias($token) {
+	global $db;
+	$update = $db->prepare('UPDATE aliases SET unconfirmed=NULL WHERE unconfirmed=?');
+	$update->execute(array($token));
+}
+
+function del_user_alias($email) {
+	global $db;
+	$del->prepare('DELETE FROM aliases WHERE email=? AND owner=?');
+	$del->execute(array($email, $_SESSION['tabby_loggedin']));
+}
+
+function email_alias_confirmation($email, $aliastoken) {
+	global $application_email;
+	global $base_url;
+	$message = "Hi there,\r\n\r\nThis email address has been added by " . $_SESSION['tabby_loggedin'] . " as an alias.\r\nIf that is correct, please confirm the alias by visiting " . $base_url . "aliasconfirm/" . $aliastoken . "\r\n\r\nHave a nice day!\r\n\r\nTabby";
+	$headers = 'From: ' . $application_email;
+	mail($email, 'Tabby: please confirm your alias', $message, $headers);
+}
+
 function update_reminddate() {
 	global $db;
 	$update = $db->prepare('UPDATE users SET reminddate=NOW() WHERE email=?');

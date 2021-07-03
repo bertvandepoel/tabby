@@ -12,6 +12,30 @@ function title($text) {
 	<?php
 }
 
+function subtitle($text) {
+	?>
+	<div class="container py-4">
+		<div class="row">
+			<div class="col-md-12">
+				<h4><?php echo $text; ?></h4>
+			</div>
+		</div>
+	</div>
+	<?php
+}
+
+function subsubtitle($text) {
+	?>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h6><?php echo $text; ?></h6>
+			</div>
+		</div>
+	</div>
+	<?php
+}
+
 function carddeck($cards, $type, $extra = NULL) {
 	echo '<div class="container-fluid">';
 	echo '<div class="row my-3">';
@@ -22,7 +46,7 @@ function carddeck($cards, $type, $extra = NULL) {
 			peoplecard($card);
 		}
 		elseif($type == 'user') {
-			usercard($card);
+			usercard($card, $extra);
 		}
 		else { //activity
 			activitycard($card, $extra);
@@ -199,8 +223,12 @@ function peoplecard($card) {
 	<?php
 }
 
-function usercard($card) {
+function usercard($card, $altlocation = NULL) {
 	global $location;
+	$prefix = $location;
+	if(!is_null($altlocation)) {
+		$prefix = $altlocation;
+	}
 	?>
 	<div class="card my-2">
 		<div class="card-header text-center">
@@ -210,7 +238,7 @@ function usercard($card) {
 			<ul class="list-group list-group-flush">
 				<?php
 				if($card['more']) {
-					echo '<li class="list-group-item text-center"><a href="' . $location . '/detail/' . $card['user'] . '" class="btn btn-outline-danger btn-sm">Show all records</a></li>';
+					echo '<li class="list-group-item text-center"><a href="' . $prefix . '/detail/' . $card['user'] . '" class="btn btn-outline-danger btn-sm">Show all records</a></li>';
 				}
 				foreach($card['data'] as $row) {
 					echo '<li class="list-group-item px-2"><span class="badge badge-primary p-2 mr-2 float-left">' . date('d M Y', strtotime($row['date'])) . '</span>  <span class="badge badge-light p-2 float-right">' . human_friendly_amount($row['amount'])  . '</span>' . $row['description'] . '</li>';

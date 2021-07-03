@@ -30,6 +30,9 @@
 			-webkit-appearance: none;
 			margin: 0;
 		}
+		li {
+			list-style: none;
+		}
 	</style>
 </head>
 <body class="d-flex flex-column h-100">

@@ -83,6 +83,8 @@ switch ($schema) {
 			echo '.';
 			$db->query('CREATE TABLE `recurring_debtors` ( `recurringid` int NOT NULL, `debtor` int NOT NULL, PRIMARY KEY (`recurringid`, `debtor`), FOREIGN KEY (`recurringid`) REFERENCES recurring(id)  ON DELETE CASCADE, FOREIGN KEY (`debtor`) REFERENCES debtors(id) );');
 			echo '.';
+			$db->query('CREATE TABLE `aliases` ( `email` varchar(50) NOT NULL, `owner` varchar(50) NOT NULL, `unconfirmed` varchar(25) NULL, KEY (`owner`), FOREIGN KEY (`owner`) REFERENCES users(email), UNIQUE KEY (`unconfirmed`) );');
+			echo '.';
 		}
 		else {
 			$db->query('CREATE TABLE "recurring" ( "id" serial, "name" varchar(250) NOT NULL, "owner" varchar(50) NOT NULL, "amount" integer NOT NULL, "start" date NOT NULL, "frequency" varchar(5) NOT NULL, "lastrun" date DEFAULT NULL, PRIMARY KEY ("id"), FOREIGN KEY ("owner") REFERENCES users(email) );');
@@ -92,6 +94,10 @@ switch ($schema) {
 			$db->query('CREATE INDEX ON "recurring" ("lastrun");');
 			echo '.';
 			$db->query('CREATE TABLE "recurring_debtors" ( "recurringid" integer NOT NULL, "debtor" integer NOT NULL, PRIMARY KEY ("recurringid", "debtor"), FOREIGN KEY ("recurringid") REFERENCES recurring(id)  ON DELETE CASCADE, FOREIGN KEY ("debtor") REFERENCES debtors(id) );');
+			echo '.';
+			$db->query('CREATE TABLE "aliases" ( "email" varchar(50) NOT NULL, "owner" varchar(50) NOT NULL, "unconfirmed" varchar(25) NULL, FOREIGN KEY ("owner") REFERENCES users(email), UNIQUE ("unconfirmed") );');
+			echo '.';
+			$db->query('CREATE INDEX ON "aliases" ("owner");');
 			echo '.';
 		}
 		$db->query('UPDATE config SET value=\'3\' WHERE id=\'schema\';');

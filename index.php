@@ -186,6 +186,12 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 			include('templates/adminconfirm.php');
 		}
 	}
+	elseif(substr($location, 0, 13) == 'aliasconfirm/') {
+		$split = explode('/', $location);
+		confirm_user_alias($split[1]);
+		$success = 'If this confirmation URL was valid, the alias has been confirmed.';
+		include('templates/success.php');
+	}
 	elseif(substr($location, 0, 6) == 'token/') {
 		$success = 'It seems you\'re logged in, redirecting you to your debt overview';
 		include('templates/success.php');
@@ -442,6 +448,20 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 		title('Detailed view');
 		detailcard(get_debtor_transactions($debtormail), 'people');
 	}
+	elseif(substr($location, 0, 13) == 'mydebt/alias/') {
+		$aliaspart = explode('mydebt/alias/', $location);
+		$alias_with_usermail = explode('/detail/', $aliaspart[1]);
+		$alias = $alias_with_usermail[0];
+		$usermail = $alias_with_usermail[1];
+		title('Detailed view');
+		if(!in_array($alias, get_confirmed_aliases())) {
+			$error = 'That alias in your URL doesn\'t look right.';
+			include('templates/error.php');
+		}
+		else {
+			detailcard(get_user_transactions_for_debtor($usermail, $alias), 'user');
+		}
+	}
 	elseif(substr($location, 0, 14) == 'mydebt/detail/') {
 		$usermail = explode('mydebt/detail/', $location);
 		$usermail = $usermail[1];
@@ -624,7 +644,22 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 				include('templates/error.php');
 			}
 		}
-		$filled = array('email' => $user['email'], 'name' => $user['name'], 'iban' => $user['iban']);
+		elseif(isset($_POST['add_alias'])) {
+			if(!filter_var($_POST['alias'], FILTER_VALIDATE_EMAIL)) {
+				$error = 'That\'s not a real email address!';
+				include('templates/error.php');
+			}
+			elseif(!validate_user_alias($_POST['alias'])) {
+				$error = 'That email address is already in use within Tabby somewhere.';
+				include('templates/error.php');
+			}
+			else {
+				add_user_alias($_POST['alias']);
+				$success = 'You new alias has been added. Don\'t forget to confirm it by clicking the link in the confirmation email.';
+				include('templates/success.php');
+			}
+		}
+		$filled = array('email' => $user['email'], 'name' => $user['name'], 'iban' => $user['iban'], 'aliases' => get_user_aliases());
 		include('templates/form_profile.php');
 	}
 	elseif($location == 'mydebt') {
@@ -636,6 +671,22 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 			title('Your debt with other users');
 			include('templates/button_merge.html');
 			carddeck(get_transactions_per_user($_SESSION['tabby_loggedin']), 'user');
+		}
+		$aliases = get_confirmed_aliases();
+		if(!empty($aliases)) {
+			subtitle('Debt with other users based on your aliases');
+			$all_empty = true;
+			foreach($aliases as $alias) {
+				if(!empty(get_transactions_per_user($alias))) {
+					$all_empty = false;
+					subsubtitle('Debt for alias ' . $alias);
+					carddeck(get_transactions_per_user($alias), 'user', 'mydebt/alias/' . $alias);
+				}
+			}
+			if($all_empty) {
+				$success = 'No debt available for any of your aliases.';
+				include('templates/success.php');
+			}
 		}
 	}
 	elseif($location == 'merge') {
@@ -685,7 +736,13 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 			include('templates/table_merge.php');
 		}
 		else {
-			$success = 'You have no mergeable debt. This means that anyone you owe doesn\'t simultaneously owe you on this instance of Tabby.';
+			$aliases = get_confirmed_aliases();
+			if(!empty($aliases)) {
+				$success = 'You have no mergeable debt. This means that anyone you owe doesn\'t simultaneously owe you on this instance of Tabby (excluding any aliases, since those aren\'t visible to others).';
+			}
+			else {
+				$success = 'You have no mergeable debt. This means that anyone you owe doesn\'t simultaneously owe you on this instance of Tabby.';
+			}
 			include('templates/success.php');
 		}
 	}
@@ -821,6 +878,13 @@ elseif(substr($location, 0, 8) == 'confirm/') {
 		$error = 'Never heard of that confirmation code.';
 		include('templates/error.php');
 	}
+}
+elseif(substr($location, 0, 13) == 'aliasconfirm/') {
+	include('templates/emptynav.html');
+	$split = explode('/', $location);
+	confirm_user_alias($split[1]);
+	$success = 'If this confirmation URL was valid, the alias has been confirmed.';
+	include('templates/success.php');
 }
 elseif(substr($location, 0, 13) == 'adminconfirm/') {
 	include('templates/emptynav.html');
