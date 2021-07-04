@@ -7,10 +7,14 @@
 	
 	<?php if(isset($base_url)) { echo '<base href="' .  $base_url . '">'; } ?>
 	
-	<link rel="apple-touch-icon" sizes="180x180" href="favicon/tabby-180.png">
+	<link rel="icon" type="image/png" sizes="512x512" href="favicon/tabby-512.png">
+	<link rel="icon" type="image/png" sizes="192x192" href="favicon/tabby-192.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="favicon/tabby-32.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="favicon/tabby-16.png">
-	<link rel="icon" href="favicon/favicon.ico"> 
+	<link rel="apple-touch-icon" sizes="180x180" href="favicon/tabby-180.png">
+	<link rel="icon" href="favicon/favicon.ico">
+	<link rel="mask-icon" href="favicon/tabby-monochrome.svg" color="#f13e5a">
+	<link rel="manifest" href="favicon/manifest.json">
 
 	<link rel="stylesheet" href="bubblegum/css/fontawesome-all.5.6.3.css">
 	<link rel="stylesheet" href="bubblegum/css/bootstrap4-bubblegum.4.3.1.min.css">
