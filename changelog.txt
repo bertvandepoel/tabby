@@ -1,3 +1,13 @@
+version 1.2
+Recurring expenses
+Account email address aliases
+Currency symbols are now configurable
+Broader favicon support
+Some small quality of life fixes:
+- consistent use of "my"
+- display account email address on My profile
+
+
 version 1.1.2 - commit f358375d5d47e0502bd13eabfb4d28751b59a304
 
 Fix problems with amount larger than or equal to 1000 euro not being displayed properly
