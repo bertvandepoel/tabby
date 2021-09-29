@@ -291,7 +291,7 @@ elseif(isset($_SESSION['tabby_loggedin'])) {
 				include('templates/form_activity.php');
 			}
 			elseif(check_debtor($_POST['debtor'][0]) OR strlen($_POST['comment'][0]) < 2 OR strlen($_POST['amount'][0]) < 1) {
-				$error = 'Your activity needs at least one contact with actual debt.';
+				$error = 'Your activity should contain at least one contact with a comment and an amount of debt specified.';
 				include('templates/error.php');
 				$filled = array('name' => $_POST['name'], 'date' => $_POST['date']);
 				include('templates/form_activity.php');
