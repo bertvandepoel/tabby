@@ -146,8 +146,8 @@ if (strpos($uri, parse_url($base_url, PHP_URL_PATH)) === 0) {
 $local_uri = strtok($local_uri, '?');
 $location = rtrim($local_uri, '/');
 
-include('templates/header.php');
 include('resources/init.php');
+include('templates/header.php');
 include('resources/users.php');
 
 if($location == 'logout') {
