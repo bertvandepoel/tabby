@@ -1,4 +1,12 @@
+version 1.2.1
+
+Small fixes:
+- Better error message when not supplying a comment on an activity debt line
+- Add more IDE files and folders to gitignore (development improvement)
+- Fix edge case where on specific server configurations thesession starting after output is already sent to the buffer causes errors
+
 version 1.2 - commit 5add4225155daf537ff2664418001fb68e6f415e
+
 Recurring expenses
 Account email address aliases
 Currency symbols are now configurable
