@@ -28,14 +28,13 @@ if(is_int(strpos(file_get_contents('config.php'), 'PDOException'))) {
 	exit;
 }
 
+include('config.php');
+include('resources/init.php');
+
 if(!is_int(strpos(file_get_contents('config.php'), 'currency'))) {
 	echo "It seems your current Tabby configuration doesn't specify a currency. While originally Tabby just supported Euro, more currencies have been added now (available through the installer).\n\nPlease edit your config.php file and add a \$currency option at the end of the file, for example:\n\n";
 	echo "\$currency = '€';";
 }
-
-
-include('config.php');
-include('resources/init.php');
 
 $get_schema = $db->prepare('SELECT value FROM config WHERE id=?');
 $get_schema->execute(array('schema'));
