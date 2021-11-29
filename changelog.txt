@@ -1,4 +1,4 @@
-version 1.2.1
+version 1.2.1 - commit 3c0ec99ebcd3ca59506f2bf5370364e9de4f4ee9
 
 Small fixes:
 - Better error message when not supplying a comment on an activity debt line
