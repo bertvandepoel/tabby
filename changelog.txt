@@ -1,4 +1,4 @@
-version 1.2.2
+version 1.2.2 - commit 3eb1c7b26fd2196b68674f36d7302004bf3666b7
 
 Small fix: add R for South African Rand as a currency during installation 
 
