@@ -68,4 +68,4 @@ function check_install($base_url) {
 	return 'changelogfail';
 }
 
-$currencies = ['€', '£', '$', '¥', '₽', '₱', '₨'];
+$currencies = ['€', '£', '$', '¥', '₽', '₱', '₨', 'R'];
